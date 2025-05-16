@@ -136,7 +136,7 @@ class _SignUpViewState extends State<SignUpView> {
                           const Text('Already have an account?'),
                           TextButton(
                             onPressed: () {
-                              Navigator.pushNamed(context, '/');
+                              Navigator.pushNamed(context, '/login');
                             },
                             child: const Text('Login'),
                           ),

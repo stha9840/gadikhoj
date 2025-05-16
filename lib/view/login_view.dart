@@ -11,6 +11,8 @@ class _LoginViewState extends State<LoginView> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  bool _obscurePassword = true;
+
 
   void _login() {
     if (_formKey.currentState!.validate()) {
@@ -25,6 +27,7 @@ class _LoginViewState extends State<LoginView> {
       labelText: label,
       prefixIcon: Icon(icon),
       border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+      
     );
   }
 
@@ -91,18 +94,24 @@ class _LoginViewState extends State<LoginView> {
                           ),
                           const SizedBox(height: 16),
                           TextFormField(
-                            controller: _passwordController,
-                            decoration: _inputDecoration(
-                              'Password',
-                              Icons.lock,
-                            ),
-                            obscureText: true,
-                            validator:
-                                (value) =>
-                                    value!.isEmpty
-                                        ? 'Enter your password'
-                                        : null,
-                          ),
+  controller: _passwordController,
+  decoration: _inputDecoration('Password', Icons.lock).copyWith(
+    suffixIcon: IconButton(
+      icon: Icon(
+        _obscurePassword ? Icons.visibility_off : Icons.visibility,
+      ),
+      onPressed: () {
+        setState(() {
+          _obscurePassword = !_obscurePassword;
+        });
+      },
+    ),
+  ),
+  obscureText: _obscurePassword,
+  validator: (value) =>
+      value!.isEmpty ? 'Enter your password' : null,
+),
+
                           const SizedBox(height: 8),
                           Align(
                             alignment: Alignment.centerRight,

@@ -13,6 +13,7 @@ class _SignUpViewState extends State<SignUpView> {
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  bool _obscurePassword = true;
 
   void _signUp() {
     if (_formKey.currentState!.validate()) {
@@ -96,8 +97,24 @@ class _SignUpViewState extends State<SignUpView> {
                       const SizedBox(height: 12),
                       TextFormField(
                         controller: _passwordController,
-                        decoration: _inputDecoration('Password', Icons.lock),
-                        obscureText: true,
+                        decoration: _inputDecoration(
+                          'Password',
+                          Icons.lock,
+                        ).copyWith(
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              _obscurePassword
+                                  ? Icons.visibility_off
+                                  : Icons.visibility,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _obscurePassword = !_obscurePassword;
+                              });
+                            },
+                          ),
+                        ),
+                        obscureText: _obscurePassword,
                         validator:
                             (value) =>
                                 value!.isEmpty ? 'Enter your password' : null,
@@ -106,13 +123,26 @@ class _SignUpViewState extends State<SignUpView> {
                       TextFormField(
                         controller: _confirmPasswordController,
                         decoration: _inputDecoration(
-                          'Confirm Password',
-                          Icons.lock_outline,
+                          'Conform password',
+                          Icons.lock,
+                        ).copyWith(
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              _obscurePassword
+                                  ? Icons.visibility_off
+                                  : Icons.visibility,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _obscurePassword = !_obscurePassword;
+                              });
+                            },
+                          ),
                         ),
-                        obscureText: true,
+                        obscureText: _obscurePassword,
                         validator:
                             (value) =>
-                                value!.isEmpty ? 'Confirm your password' : null,
+                                value!.isEmpty ? 'Enter your password' : null,
                       ),
                       const SizedBox(height: 24),
                       SizedBox(

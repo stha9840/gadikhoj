@@ -1,7 +1,7 @@
+import 'package:flutter/material.dart';
 import 'package:finalyearproject/view/login_view.dart';
 import 'package:finalyearproject/view/signup_view.dart';
-import 'package:flutter/material.dart';
-
+import 'package:finalyearproject/view/splash_screen_view.dart'; // Make sure this import is present
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -12,9 +12,9 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Auth App',
       theme: ThemeData(fontFamily: 'Arial'),
-      initialRoute: '/',
+      home: const SplashScreenView(), // 👈 Start with splash screen
       routes: {
-        '/': (context) => const LoginView(),
+        '/login': (context) => const LoginView(),
         '/signup': (context) => const SignUpView(),
       },
     );

@@ -15,9 +15,17 @@ class _LoginViewState extends State<LoginView> {
 
   void _login() {
     if (_formKey.currentState!.validate()) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Logging in...')),
-      );
+      final email = _emailController.text.trim();
+      final password = _passwordController.text;
+
+      // Simple static credential check
+      if (email == 'admin@example.com' && password == 'admin123') {
+        Navigator.pushNamed(context, '/dashboard');
+      } else {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Invalid credentials')));
+      }
     }
   }
 
@@ -43,10 +51,7 @@ class _LoginViewState extends State<LoginView> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Image.asset(
-                    'assets/logos/gadikhojlogo.png',
-                    height: 120, // Smaller logo
-                  ),
+                  Image.asset('assets/logos/gadikhojlogo.png', height: 120),
                   const SizedBox(height: 30),
                   Container(
                     width: double.infinity,
@@ -78,15 +83,18 @@ class _LoginViewState extends State<LoginView> {
                           TextFormField(
                             controller: _emailController,
                             decoration: _inputDecoration('Email', Icons.email),
-                            validator: (value) =>
-                                value!.isEmpty ? 'Enter your email' : null,
+                            validator:
+                                (value) =>
+                                    value!.isEmpty ? 'Enter your email' : null,
                           ),
                           const SizedBox(height: 12),
                           TextFormField(
                             controller: _passwordController,
                             obscureText: _obscurePassword,
-                            decoration: _inputDecoration('Password', Icons.lock)
-                                .copyWith(
+                            decoration: _inputDecoration(
+                              'Password',
+                              Icons.lock,
+                            ).copyWith(
                               suffixIcon: IconButton(
                                 icon: Icon(
                                   _obscurePassword
@@ -100,21 +108,30 @@ class _LoginViewState extends State<LoginView> {
                                 },
                               ),
                             ),
-                            validator: (value) =>
-                                value!.isEmpty ? 'Enter your password' : null,
+                            validator:
+                                (value) =>
+                                    value!.isEmpty
+                                        ? 'Enter your password'
+                                        : null,
                           ),
-                          const SizedBox(height: 10),
+                          const SizedBox(height: 8),
                           Align(
                             alignment: Alignment.centerRight,
-                            child: TextButton(
-                              onPressed: () {},
+                            child: GestureDetector(
+                              onTap: () {
+                                // Implement password recovery logic here
+                              },
                               child: const Text(
                                 'Forgot Password?',
-                                style: TextStyle(fontSize: 13),
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: Color(0xFFB24747),
+                                  fontWeight: FontWeight.w500,
+                                ),
                               ),
                             ),
                           ),
-                          const SizedBox(height: 8),
+                          const SizedBox(height: 12),
                           SizedBox(
                             width: double.infinity,
                             child: ElevatedButton(
@@ -122,8 +139,9 @@ class _LoginViewState extends State<LoginView> {
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: const Color(0xFFB24747),
                                 foregroundColor: Colors.white,
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 12),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 12,
+                                ),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(24),
                                 ),
@@ -143,7 +161,14 @@ class _LoginViewState extends State<LoginView> {
                                 onPressed: () {
                                   Navigator.pushNamed(context, '/signup');
                                 },
-                                child: const Text('Sign up'),
+                                child: const Text(
+                                  'Sign up',
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    color: Color.fromARGB(255, 36, 43, 255),
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
                               ),
                             ],
                           ),

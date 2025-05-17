@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 
-class DashboardView extends StatefulWidget {
+class DashboardView extends StatelessWidget {
   const DashboardView({super.key});
 
   @override
-  State<DashboardView> createState() => _DashboardViewState();
-}
-
-class _DashboardViewState extends State<DashboardView> {
-  @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Scaffold(
+      appBar: AppBar(title: const Text('Dashboard')),
+      body: const Center(
+        child: Text(
+          'Welcome to the Dashboard!',
+          style: TextStyle(fontSize: 18),
+        ),
+      ),
+    );
   }
 }

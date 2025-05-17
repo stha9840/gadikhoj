@@ -14,10 +14,19 @@ class _LoginViewState extends State<LoginView> {
   bool _obscurePassword = true;
 
   void _login() {
-    if (_formKey.currentState!.validate()) {
-      final email = _emailController.text.trim();
-      final password = _passwordController.text;
+    final email = _emailController.text.trim();
+    final password = _passwordController.text;
 
+    // Show SnackBar if either field is empty
+    if (email.isEmpty || password.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter both email and password')),
+      );
+      return;
+    }
+
+    // Then validate form fields
+    if (_formKey.currentState!.validate()) {
       // Simple static credential check
       if (email == 'admin@example.com' && password == 'admin123') {
         Navigator.pushNamed(context, '/dashboard');
@@ -119,7 +128,7 @@ class _LoginViewState extends State<LoginView> {
                             alignment: Alignment.centerRight,
                             child: GestureDetector(
                               onTap: () {
-                                // Implement password recovery logic here
+                                // TODO: Add forgot password logic
                               },
                               child: const Text(
                                 'Forgot Password?',

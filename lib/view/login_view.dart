@@ -29,7 +29,7 @@ class _LoginViewState extends State<LoginView> {
     if (_formKey.currentState!.validate()) {
       // Simple static credential check
       if (email == 'admin@example.com' && password == 'admin123') {
-        Navigator.pushNamed(context, '/dashboard');
+        Navigator.pushReplacementNamed(context, '/dashboard');
       } else {
         ScaffoldMessenger.of(
           context,
@@ -127,9 +127,7 @@ class _LoginViewState extends State<LoginView> {
                           Align(
                             alignment: Alignment.centerRight,
                             child: GestureDetector(
-                              onTap: () {
-                                // TODO: Add forgot password logic
-                              },
+                              onTap: () {},
                               child: const Text(
                                 'Forgot Password?',
                                 style: TextStyle(

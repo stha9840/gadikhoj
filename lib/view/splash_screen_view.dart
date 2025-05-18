@@ -14,35 +14,56 @@ class _SplashScreenViewState extends State<SplashScreenView> {
   @override
   Widget build(BuildContext context) {
     return AnimatedSplashScreen(
-      splash: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          SizedBox(
-            height: 160,
-            width: 160,
-            child: Lottie.asset("assets/lottie/Animation - 1747329645355.json"),
-          ),
-          const SizedBox(height: 16),
-          RichText(
-            text: const TextSpan(
-              style: TextStyle(fontSize: 44, color: Colors.black),
+      splash: LayoutBuilder(
+        builder: (context, constraints) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
               children: [
-                TextSpan(
-                  text: 'Gadi ',
-                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.blue ),
+                const Text.rich(
+                  TextSpan(
+                    style: TextStyle(fontSize: 36, color: Colors.black),
+                    children: [
+                      TextSpan(
+                        text: 'Gadi ',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.blue,
+                        ),
+                      ),
+                      TextSpan(
+                        text: 'khoj',
+                        style: TextStyle(fontStyle: FontStyle.italic),
+                      ),
+                    ],
+                  ),
+                  textAlign: TextAlign.center,
                 ),
-                TextSpan(
-                  text: 'khoj',
-                  style: TextStyle(fontStyle: FontStyle.italic),
+                const Text(
+                  'Find your perfect ride',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontStyle: FontStyle.italic,
+                    color: Colors.grey,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                
+                Lottie.asset(
+                  "assets/lottie/Animation - 1747329645355.json",
+                  height: constraints.maxHeight * 0.22,
+                  fit: BoxFit.contain,
                 ),
               ],
             ),
-          ),
-        ],
+          );
+        },
       ),
       nextScreen: const LoginView(),
-      splashIconSize: 250,
+      splashIconSize: double.infinity,
       backgroundColor: Colors.white,
+      splashTransition: SplashTransition.fadeTransition,
     );
   }
 }

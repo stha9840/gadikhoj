@@ -17,7 +17,7 @@ class _LoginViewState extends State<LoginView> {
     final email = _emailController.text.trim();
     final password = _passwordController.text;
 
-    // Show SnackBar if either field is empty
+  
     if (email.isEmpty || password.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please enter both email and password')),

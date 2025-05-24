@@ -13,11 +13,11 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Auth App',
       theme: ThemeData(fontFamily: 'Arial'),
-      home: const SplashScreenView(),
+      home: const DashboardView(),
       routes: {
         '/login': (context) => const LoginView(),
         '/signup': (context) => const SignUpView(),
-        '/dashboard': (context) => const DashboardView(), 
+        '/dashboard': (context) => const DashboardView(),
       },
     );
   }

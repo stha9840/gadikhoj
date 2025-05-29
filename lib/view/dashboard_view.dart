@@ -25,11 +25,12 @@ class _DashboardViewState extends State<DashboardView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Dashboard'),
-        automaticallyImplyLeading: false,
-      ),
-      body: lstBottomScreen[_selectedIndex], // ✅ Only this one should remain
+      body: Padding(
+        padding: const EdgeInsets.only(
+          top: 20,
+        ), // Adjust 20 to whatever gap you want
+        child: lstBottomScreen[_selectedIndex],
+      ), // ✅ Only this one should remain
       bottomNavigationBar: Theme(
         data: Theme.of(context).copyWith(
           splashColor: Colors.transparent,

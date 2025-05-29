@@ -38,7 +38,7 @@ class _DashboardViewState extends State<DashboardView> {
           hoverColor: Colors.transparent,
         ),
         child: BottomNavigationBar(
-          showSelectedLabels: false,
+          // showSelectedLabels: false,
           showUnselectedLabels: false,
 
           type: BottomNavigationBarType.fixed,

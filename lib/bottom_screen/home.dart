@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class Home extends StatelessWidget {
   const Home({super.key});
@@ -43,6 +42,22 @@ class Home extends StatelessWidget {
                     child: Icon(Icons.person, color: Colors.black),
                   ),
                 ],
+              ),
+              const SizedBox(height: 20),
+              //Search bar
+              TextField(
+                decoration: InputDecoration(
+                  hintText: "Search Vehicle",
+                  prefixIcon: const Icon(Icons.search),
+                  suffixIcon: const Icon(Icons.tune),
+                  filled: true,
+                  fillColor: Colors.white,
+                  contentPadding: const EdgeInsets.symmetric(vertical: 0),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(19),
+                    borderSide: BorderSide.none,
+                  ),
+                ),
               ),
             ],
           ),

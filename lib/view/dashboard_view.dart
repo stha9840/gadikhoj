@@ -25,13 +25,10 @@ class _DashboardViewState extends State<DashboardView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
       body: Padding(
-        padding: const EdgeInsets.only(
-          top: 20,
-        ), 
+        padding: const EdgeInsets.only(top: 20),
         child: lstBottomScreen[_selectedIndex],
-      ), 
+      ),
       bottomNavigationBar: Theme(
         data: Theme.of(context).copyWith(
           splashColor: Colors.transparent,

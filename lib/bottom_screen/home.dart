@@ -7,6 +7,7 @@ class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8),
@@ -135,109 +136,142 @@ class Home extends StatelessWidget {
     required String image,
     required String price,
   }) {
-    return Container(
-      padding: const EdgeInsets.all(11),
-      margin: const EdgeInsets.only(bottom: 8),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(19),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 10,
-            spreadRadius: 1,
-            offset: const Offset(0, 4),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final screenWidth = MediaQuery.of(context).size.width;
+        final isTablet = screenWidth > 600;
+
+        return Container(
+          padding: const EdgeInsets.all(11),
+          margin: const EdgeInsets.only(bottom: 12),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(19),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.08),
+                blurRadius: 10,
+                spreadRadius: 1,
+                offset: const Offset(0, 4),
+              ),
+            ],
           ),
-        ],
-      ),
-      child: Column(
-        children: [
-          // Title and Favorite
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          child: Column(
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              // Title and Favorite
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14,
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 14,
+                        ),
+                      ),
+                      Text(
+                        subtitle,
+                        style: const TextStyle(
+                          color: Colors.grey,
+                          fontSize: 11.5,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const Icon(Icons.favorite_border, size: 18),
+                ],
+              ),
+              const SizedBox(height: 8),
+
+              // Responsive Image
+              Center(
+                child: Image.asset(
+                  image,
+                  height: isTablet ? 160 : 120,
+                  width: isTablet ? 260 : null,
+                  fit: BoxFit.contain,
+                ),
+              ),
+              const SizedBox(height: 10),
+
+              // Specs Row
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: const [
+                  Expanded(
+                    child: IconText(
+                      icon: FontAwesomeIcons.gasPump,
+                      text: "35 litres",
                     ),
                   ),
-                  Text(
-                    subtitle,
-                    style: const TextStyle(color: Colors.grey, fontSize: 11.5),
+                  Expanded(
+                    child: IconText(
+                      icon: FontAwesomeIcons.weightHanging,
+                      text: "1300 kg",
+                    ),
+                  ),
+                  Expanded(
+                    child: IconText(
+                      icon: FontAwesomeIcons.userGroup,
+                      text: "2–3 people",
+                    ),
                   ),
                 ],
               ),
-              const Icon(Icons.favorite_border, size: 18),
-            ],
-          ),
-          const SizedBox(height: 8),
+              const SizedBox(height: 10),
 
-          // Image
-          Center(child: Image.asset(image, height: 120, fit: BoxFit.contain)),
-          const SizedBox(height: 10),
-
-          // Specs Row
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: const [
-              IconText(icon: FontAwesomeIcons.gasPump, text: "35 litres"),
-              IconText(icon: FontAwesomeIcons.weightHanging, text: "1300 kg"),
-              IconText(icon: FontAwesomeIcons.userGroup, text: "2–3 people"),
-            ],
-          ),
-          const SizedBox(height: 10),
-          // Pricing and Button
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              RichText(
-                text: TextSpan(
-                  children: [
-                    TextSpan(
-                      text: "Npr $price /- ",
-                      style: const TextStyle(
-                        color: Colors.black,
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600,
+              // Price and Rent Button
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  RichText(
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: "Npr $price /- ",
+                          style: const TextStyle(
+                            color: Colors.black,
+                            fontSize: 20,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const TextSpan(
+                          text: "Per trip",
+                          style: TextStyle(color: Colors.grey, fontSize: 15),
+                        ),
+                      ],
+                    ),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {},
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blueAccent,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 10,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
                       ),
                     ),
-                    const TextSpan(
-                      text: "Per trip",
-                      style: TextStyle(color: Colors.grey, fontSize: 15),
+                    child: const Text(
+                      "Rent Now",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
-                  ],
-                ),
-              ),
-              ElevatedButton(
-                onPressed: () {},
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blueAccent,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 10,
                   ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14),
-                  ),
-                ),
-                child: const Text(
-                  "Rent Now",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
+                ],
               ),
             ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

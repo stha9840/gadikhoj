@@ -1,4 +1,5 @@
-import 'package:finalyearproject/theme/app_theme.dart';
+
+import 'package:finalyearproject/app/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:finalyearproject/view/login_view.dart';
 import 'package:finalyearproject/view/signup_view.dart';

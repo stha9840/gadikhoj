@@ -5,27 +5,30 @@ import 'package:path_provider/path_provider.dart';
 
 class HiveService {
   Future<void> init() async {
-    final directory = await getApplicationDocumentsDirectory();
-    Hive.init(directory.path);
+    var directory = await getApplicationDocumentsDirectory();
+    var path = '${directory.path}gadi_khoj.db';
+    Hive.init(path);
 
     // Register the adapter
-    Hive.registerAdapter(UserHiveModelAdapter());
+    if (!Hive.isAdapterRegistered(0)) {
+      Hive.registerAdapter(UserHiveModelAdapter());
+    }
   }
 
   // Register a new user
   Future<void> registerUser(UserHiveModel user) async {
-    final box = await Hive.openBox<UserHiveModel>(HiveTableConstant.userBox);
-    await box.put(user.email, user);
+    var box = await Hive.openBox<UserHiveModel>(HiveTableConstant.userBox);
+    await box.put(user.userId, user); // or key by email/ID
   }
 
   // Login with email and password
-  Future<UserHiveModel?> login(String email, String password) async {
-    final box = await Hive.openBox<UserHiveModel>(HiveTableConstant.userBox);
+  Future<UserHiveModel?> loginUser(String email, String password) async {
+    var box = await Hive.openBox<UserHiveModel>(HiveTableConstant.userBox);
 
-    final user = box.get(email);
-    if (user == null) return null;
-    if (user.password != password) return null;
-
+    var user = box.values.firstWhere(
+      (user) => (user.email == email) && user.password == password,
+      orElse: () => throw Exception("Invalid username or password"),
+    );
     return user;
   }
 

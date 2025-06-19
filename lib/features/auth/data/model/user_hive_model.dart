@@ -2,6 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
 import 'package:finalyearproject/app/constant/hive/hive_table_constant.dart';
 import 'package:finalyearproject/features/auth/domain/entity/user_entity.dart';
+import 'package:uuid/uuid.dart';
 
 part 'user_hive_model.g.dart';
 
@@ -20,26 +21,30 @@ class UserHiveModel extends Equatable {
   final String password;
 
   UserHiveModel({
-    this.userId,
+    String? userId,
     required this.name,
     required this.email,
     required this.password,
-  });
+  }) : userId = userId ?? const Uuid().v4();
+
+  const UserHiveModel.initial(this.email, this.password)
+    : userId = '',
+      name = '';
 
   // From Entity
-  factory UserHiveModel.fromEntity(UserEntity entity) {
+  factory UserHiveModel.fromEntity(UserEntity user) {
     return UserHiveModel(
-      userId: entity.userId,
-      name: entity.name,
-      email: entity.email,
-      password: entity.password,
+      // userId: entity.userId,
+      name: user.name,
+      email: user.email,
+      password: user.password,
     );
   }
 
   // To Entity
   UserEntity toEntity() {
     return UserEntity(
-      userId: userId,
+      // userId: userId,
       name: name,
       email: email,
       password: password,
@@ -47,10 +52,5 @@ class UserHiveModel extends Equatable {
   }
 
   @override
-  List<Object?> get props => [
-    userId,
-    name,
-    email,
-    password,
-  ];
+  List<Object?> get props => [userId, name, email, password];
 }

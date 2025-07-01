@@ -29,12 +29,6 @@
   //   );
   // }
 
- import 'package:finalyearproject/app/app.dart';
-import 'package:finalyearproject/app/service_locator/service_locator.dart';
-import 'package:finalyearproject/core/network/hive_service.dart';
-import 'package:finalyearproject/features/auth/presentation/view_model/login_view_model/login_view_model.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

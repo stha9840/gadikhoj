@@ -32,7 +32,7 @@ class RegisterUserUseCase
   @override
   Future<Either<Failure, void>> call(RegisterUserParams params) {
     final user = UserEntity(
-      name: params.name,
+      username: params.name,
       email: params.email,
       password: params.password,
     );

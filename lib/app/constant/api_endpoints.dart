@@ -2,7 +2,7 @@ class ApiEndpoints {
   ApiEndpoints._();
 
   //Timeouts
-  static const ConnectionTimeout = Duration(seconds: 1000);
+  static const connectionTimeout = Duration(seconds: 1000);
   static const receiveTimeout = Duration(seconds: 1000);
 
   //for android emulator

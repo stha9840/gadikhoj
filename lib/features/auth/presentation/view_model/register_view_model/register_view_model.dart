@@ -22,7 +22,7 @@ class RegisterViewModel extends Bloc<RegisterEvent, RegisterState> {
   
     final result = await _registerUsecase(
       RegisterUserParams(
-        name: event.name, // include this if your use case requires it
+        name: event.username, // include this if your use case requires it
         email: event.email,
         password: event.password,
       ),

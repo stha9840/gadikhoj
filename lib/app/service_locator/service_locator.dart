@@ -1,7 +1,10 @@
 // lib/app/service_locator/service_locator.dart
 
+import 'package:finalyearproject/core/network/api_service.dart';
 import 'package:finalyearproject/core/network/hive_service.dart';
+import 'package:finalyearproject/features/auth/data/data_source/remote_datasource/user_remote_datasource.dart';
 import 'package:finalyearproject/features/auth/data/repository/local_repository/user_local_repository.dart';
+import 'package:finalyearproject/features/auth/data/repository/remote_repository/user_remote_repository.dart';
 import 'package:finalyearproject/features/auth/domain/use_case/user_login_usecase.dart';
 import 'package:finalyearproject/features/auth/domain/use_case/user_register_usecase.dart';
 import 'package:finalyearproject/features/auth/presentation/view_model/register_view_model/register_view_model.dart';
@@ -32,23 +35,33 @@ Future _initAuthModule() async {
     () => UserLocalDatasource(hiveservice: serviceLocator<HiveService>()),
   );
 
+  serviceLocator.registerFactory(
+    () => UserRemoteDatasource(apiService: serviceLocator<ApiService>()),
+  );
+
   // Repository
   serviceLocator.registerFactory(
     () => UserLocalRepository(
       userLocalDatasource: serviceLocator<UserLocalDatasource>(),
     ),
   );
+  serviceLocator.registerFactory(
+    () => UserRemoteRepository(
+      userremoteDatasoource: serviceLocator<UserRemoteDatasource>(),
+    ),
+  );
+  
 
   // Use Cases
 
   serviceLocator.registerFactory(
     () => RegisterUserUseCase(
-      userRepository: serviceLocator<UserLocalRepository>(),
+      userRepository: serviceLocator<UserRemoteRepository>(),
     ),
   );
   serviceLocator.registerFactory(
     () =>
-        UserLoginUsecase(userRepository: serviceLocator<UserLocalRepository>()),
+        UserLoginUsecase(userRepository: serviceLocator<UserRemoteRepository>()),
   );
 
   // ViewModels

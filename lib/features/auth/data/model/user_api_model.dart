@@ -43,5 +43,5 @@ class UserApiModel extends Equatable {
   }
 
   @override
-  List<Object?> get props => [userId, email, password];
+  List<Object?> get props => [userId, username, email, password];
 }

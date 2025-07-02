@@ -6,9 +6,9 @@ class ApiEndpoints {
   static const receiveTimeout = Duration(seconds: 1000);
 
   //for android emulator
-  static const String serverAddress = "http://192.168.101.2:3000";
+  static const String serverAddress = "http://192.168.101.2:5000/api/";
 
   //Auth
   static const String login = "/login";
-  static const String register = "/regsiter";
+  static const String register = "auth/register";
 }

@@ -1,5 +1,6 @@
 // lib/app/service_locator/service_locator.dart
 
+import 'package:dio/dio.dart';
 import 'package:finalyearproject/core/network/api_service.dart';
 import 'package:finalyearproject/core/network/hive_service.dart';
 import 'package:finalyearproject/features/auth/data/data_source/remote_datasource/user_remote_datasource.dart';
@@ -30,6 +31,9 @@ Future<void> _initSplashModule() async {
 }
 
 Future _initAuthModule() async {
+  // Register ApiService
+  serviceLocator.registerLazySingleton<ApiService>(() => ApiService(Dio()));
+
   // Data Source
   serviceLocator.registerFactory(
     () => UserLocalDatasource(hiveservice: serviceLocator<HiveService>()),
@@ -45,23 +49,24 @@ Future _initAuthModule() async {
       userLocalDatasource: serviceLocator<UserLocalDatasource>(),
     ),
   );
+
   serviceLocator.registerFactory(
     () => UserRemoteRepository(
       userremoteDatasoource: serviceLocator<UserRemoteDatasource>(),
     ),
   );
-  
 
   // Use Cases
-
   serviceLocator.registerFactory(
     () => RegisterUserUseCase(
       userRepository: serviceLocator<UserRemoteRepository>(),
     ),
   );
+
   serviceLocator.registerFactory(
-    () =>
-        UserLoginUsecase(userRepository: serviceLocator<UserRemoteRepository>()),
+    () => UserLoginUsecase(
+      userRepository: serviceLocator<UserRemoteRepository>(),
+    ),
   );
 
   // ViewModels
@@ -75,3 +80,4 @@ Future _initAuthModule() async {
     ),
   );
 }
+

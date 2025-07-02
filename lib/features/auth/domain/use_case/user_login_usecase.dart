@@ -23,11 +23,15 @@ class UserLoginUsecase implements UseCaseWithParams<String, UserLoginParams> {
     : _userRepository = userRepository;
 
   @override
-  Future<Either<Failure, String>> call(UserLoginParams params) async{
-    
-    
-    final token =  await _userRepository.loginUser(
-      params.email, 
-      params.password);
+  Future<Either<Failure, String>> call(UserLoginParams params) async {
+    final result = await _userRepository.loginUser(
+      params.email,
+      params.password,
+    );
+
+    return result.fold((failure) => Left(failure), (token) async {
+      await _tokenSharedPrefs.saveToken(token);
+      return Right(token);
+    });
   }
 }

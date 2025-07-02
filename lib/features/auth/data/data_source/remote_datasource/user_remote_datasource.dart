@@ -8,12 +8,11 @@ import 'package:finalyearproject/features/auth/domain/entity/user_entity.dart';
 class UserRemoteDatasource implements IUserDataSource {
   final ApiService _apiService;
 
-  UserRemoteDatasource({
-    required ApiService apiService})
+  UserRemoteDatasource({required ApiService apiService})
     : _apiService = apiService;
 
   @override
-  Future<String> loginUser(String email, String password) async{
+  Future<String> loginUser(String email, String password) async {
     try {
       final response = await _apiService.dio.post(
         ApiEndpoints.login,
@@ -26,34 +25,30 @@ class UserRemoteDatasource implements IUserDataSource {
         throw Exception(response.statusMessage);
       }
     } on DioException catch (e) {
-      throw Exception('Failed to login student: ${e.message}');
+      throw Exception('Failed to login user: ${e.message}');
     } catch (e) {
-      throw Exception('Failed to login student: $e');
+      throw Exception('Failed to login user: $e');
     }
-   
-
   }
 
   @override
   Future<void> registerUser(UserEntity user) async {
-     try {
+    try {
       final userApiModel = UserApiModel.fromEntity(user);
       final response = await _apiService.dio.post(
         ApiEndpoints.register,
         data: userApiModel.toJson(),
       );
-      if (response.statusCode == 200) {
+      if (response.statusCode != null &&
+          response.statusCode! >= 200 &&
+          response.statusCode! < 300) {
         return;
       } else {
-        throw Exception(
-          'Failed to register user: ${response.statusMessage}',
-        );
+        throw Exception('Failed to register user: ${response.statusMessage}');
       }
     } on DioException catch (e) {
-      throw Exception('Failed to register user: ${e.message}');
-    } catch (e) {
-      throw Exception('Failed to register user: $e');
+      final errorMessage = e.response?.data['message'] ?? e.message;
+      throw Exception('Failed to register user: $errorMessage');
     }
-  
   }
 }

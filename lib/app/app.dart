@@ -1,9 +1,6 @@
-import 'package:finalyearproject/app/service_locator/service_locator.dart';
-import 'package:finalyearproject/app/theme/app_theme.dart';
+
 import 'package:finalyearproject/features/auth/presentation/view/login_view.dart';
-import 'package:finalyearproject/features/auth/presentation/view_model/login_view_model/login_view_model.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 // class MyApp extends StatelessWidget {
 //   const MyApp({super.key});

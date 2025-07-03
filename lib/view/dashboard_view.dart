@@ -1,7 +1,7 @@
-import 'package:finalyearproject/bottom_screen/booking.dart';
-import 'package:finalyearproject/bottom_screen/home.dart';
-import 'package:finalyearproject/bottom_screen/notifications.dart';
-import 'package:finalyearproject/bottom_screen/profile.dart';
+import 'package:finalyearproject/features/booking/presentation/view/booking_view.dart';
+import 'package:finalyearproject/features/home/presentation/view/home_view.dart';
+import 'package:finalyearproject/features/notification/presentation/view/notification_view.dart';
+import 'package:finalyearproject/features/profile/presentation/view/profile_view.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -16,10 +16,10 @@ class _DashboardViewState extends State<DashboardView> {
   int _selectedIndex = 0;
 
   List<Widget> lstBottomScreen = [
-    const Home(),
-    const Booking(),
-    const Notifications(),
-    const Profile(),
+    const HomeView(),
+    const BookingView(),
+    const NotificationsView(),
+    const ProfileView(),
   ];
 
   @override

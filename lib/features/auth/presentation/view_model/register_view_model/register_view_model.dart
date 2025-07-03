@@ -27,7 +27,7 @@ class RegisterViewModel extends Bloc<RegisterEvent, RegisterState> {
         password: event.password,
       ),
     );
-    print("Register usecase result: $result"); // DEBUG
+    // print("Register usecase result: $result"); // DEBUG
 
     result.fold(
       (failure) {

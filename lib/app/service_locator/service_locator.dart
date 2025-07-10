@@ -10,6 +10,11 @@ import 'package:finalyearproject/features/auth/data/repository/remote_repository
 import 'package:finalyearproject/features/auth/domain/use_case/user_login_usecase.dart';
 import 'package:finalyearproject/features/auth/domain/use_case/user_register_usecase.dart';
 import 'package:finalyearproject/features/auth/presentation/view_model/register_view_model/register_view_model.dart';
+import 'package:finalyearproject/features/home/data/data_source/remote_data_source/vehicle_remote_data_source.dart';
+import 'package:finalyearproject/features/home/data/repository/remote_repository/remote_repository.dart';
+import 'package:finalyearproject/features/home/domain/repository/vehicle_repository.dart';
+import 'package:finalyearproject/features/home/domain/use_case/get_all_vehicles_usecase.dart';
+import 'package:finalyearproject/features/home/presentation/view_model/vehicle_view_model.dart';
 import 'package:get_it/get_it.dart';
 import 'package:finalyearproject/features/splash/presentation/view_model/splash_view_model.dart';
 import 'package:finalyearproject/features/auth/presentation/view_model/login_view_model/login_view_model.dart';
@@ -23,11 +28,42 @@ Future<void> setupLocator() async {
   await _initAuthModule();
   await _initSharedPrefs();
   await _initSplashModule();
+  await _initVehicleModule();
+  
 }
 
 Future<void> _initHiveService() async {
   serviceLocator.registerLazySingleton<HiveService>(() => HiveService());
 }
+
+Future<void> _initVehicleModule() async {
+  // Data source
+  serviceLocator.registerLazySingleton<VehicleRemoteDatasource>(
+    () => VehicleRemoteDatasource(apiService: serviceLocator<ApiService>()),
+  );
+
+  // Repository - note: you use IVehicleRepository as abstract class with concrete implementation RemoteRepository
+  serviceLocator.registerLazySingleton<IVehicleRepository>(
+    () => VehicleRemoteRepository(
+      remoteDatasource: serviceLocator<VehicleRemoteDatasource>(),
+    ),
+  );
+
+  // Use case - needs both repository and TokenSharedPrefs
+  serviceLocator.registerLazySingleton<GetAllVehiclesUsecase>(
+    () => GetAllVehiclesUsecase(
+      vehicleRepository: serviceLocator<IVehicleRepository>(),
+      tokenSharedPrefs: serviceLocator<TokenSharedPrefs>(),
+    ),
+  );
+
+  // Bloc or ViewModel
+  serviceLocator.registerFactory<VehicleBloc>(
+    () => VehicleBloc(getAllVehiclesUsecase: serviceLocator<GetAllVehiclesUsecase>()),
+  );
+}
+
+
 
 Future<void> _initSplashModule() async {
   serviceLocator.registerFactory(() => SplashViewModel());

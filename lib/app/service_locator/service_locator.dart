@@ -13,7 +13,9 @@ import 'package:finalyearproject/features/auth/presentation/view_model/register_
 import 'package:finalyearproject/features/home/data/data_source/remote_data_source/vehicle_remote_data_source.dart';
 import 'package:finalyearproject/features/home/data/repository/remote_repository/remote_repository.dart';
 import 'package:finalyearproject/features/home/domain/repository/vehicle_repository.dart';
+import 'package:finalyearproject/features/home/domain/use_case/create_booking_usecase.dart';
 import 'package:finalyearproject/features/home/domain/use_case/get_all_vehicles_usecase.dart';
+import 'package:finalyearproject/features/home/presentation/view_model/Booking/booking_view_model.dart';
 import 'package:finalyearproject/features/home/presentation/view_model/vehicle_view_model.dart';
 import 'package:get_it/get_it.dart';
 import 'package:finalyearproject/features/splash/presentation/view_model/splash_view_model.dart';
@@ -29,11 +31,29 @@ Future<void> setupLocator() async {
   await _initSharedPrefs();
   await _initSplashModule();
   await _initVehicleModule();
+  await _initBookingModule();
+  
   
 }
 
 Future<void> _initHiveService() async {
   serviceLocator.registerLazySingleton<HiveService>(() => HiveService());
+}
+Future<void> _initBookingModule() async {
+  // Don't re-register VehicleRemoteDatasource or IVehicleRepository here!
+
+  // Only register CreateBookingUsecase and BookingBloc
+
+  serviceLocator.registerLazySingleton<CreateBookingUsecase>(
+    () => CreateBookingUsecase(
+      repository: serviceLocator<IVehicleRepository>(),  // reuse existing repo
+      tokenSharedPrefs: serviceLocator<TokenSharedPrefs>(),
+    ),
+  );
+
+  serviceLocator.registerFactory<BookingBloc>(
+    () => BookingBloc(createBookingUsecase: serviceLocator<CreateBookingUsecase>()),
+  );
 }
 
 Future<void> _initVehicleModule() async {

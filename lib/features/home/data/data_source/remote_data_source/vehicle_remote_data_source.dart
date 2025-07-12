@@ -9,113 +9,65 @@ import 'package:finalyearproject/features/home/domain/entity/vehicle.dart';
 class VehicleRemoteDatasource implements IVehicleDatasource {
   final ApiService _apiService;
   VehicleRemoteDatasource({required ApiService apiService})
-      : _apiService = apiService;
-
- @override
-Future<List<VehicleEntity>> getAllVehicles(String? token) async {
-  try {
-    final response = await _apiService.dio.get(
-      ApiEndpoints.getAllVehicles,
-      // Remove the header since it's unnecessary
-    );
-
-    if (response.statusCode == 200) {
-      GetAllVehiclesDto dto = GetAllVehiclesDto.fromJson(response.data);
-      return VehicleApiModel.toEntityList(dto.data);
-    } else {
-      throw Exception("Failed to fetch vehicles: ${response.statusMessage}");
-    }
-  } on DioException catch (e) {
-    throw Exception("Failed to fetch vehicles: ${e.message}");
-  } catch (e) {
-    throw Exception("Unexpected error occurred: $e");
-  }
-}
+    : _apiService = apiService;
 
   @override
-  Future<VehicleEntity> getVehicleById(String? token, String vehicleId) async {
+  Future<List<VehicleEntity>> getAllVehicles(String? token) async {
     try {
       final response = await _apiService.dio.get(
-        "${ApiEndpoints.getAllVehicles}$vehicleId",
-        options: Options(headers: {'Authorization': 'Bearer $token'}),
+        ApiEndpoints.getAllVehicles,
+        // Remove the header since it's unnecessary
       );
 
       if (response.statusCode == 200) {
-        final vehicleApiModel = VehicleApiModel.fromJson(response.data);
-        return vehicleApiModel.toEntity();
+        GetAllVehiclesDto dto = GetAllVehiclesDto.fromJson(response.data);
+        return VehicleApiModel.toEntityList(dto.data);
       } else {
-        throw Exception("Failed to fetch vehicle details: ${response.statusMessage}");
+        throw Exception("Failed to fetch vehicles: ${response.statusMessage}");
       }
     } on DioException catch (e) {
-      throw Exception("Failed to fetch vehicle details: ${e.message}");
+      throw Exception("Failed to fetch vehicles: ${e.message}");
     } catch (e) {
       throw Exception("Unexpected error occurred: $e");
     }
   }
-
+  
   @override
-  Future<void> addVehicle(String? token, VehicleEntity vehicleEntity) async {
-    try {
-      final vehicleApiModel = VehicleApiModel.fromEntity(vehicleEntity);
+Future<void> createBooking(
+  String? token,
+  String vehicleId, {
+  required DateTime startDate,
+  required DateTime endDate,
+  required String pickupLocation,
+  required String dropLocation,
+  required double totalPrice,
+}) async {
+  try {
+    final response = await _apiService.dio.post(
+      ApiEndpoints.createBooking,
+      data: {
+        "vehicleId": vehicleId,
+        "startDate": startDate.toIso8601String(),
+        "endDate": endDate.toIso8601String(),
+        "pickupLocation": pickupLocation,
+        "dropLocation": dropLocation,
+        "totalPrice": totalPrice,
+      },
+      options: Options(
+        headers: {
+          "Authorization": "Bearer $token",
+          "Content-Type": "application/json",
+        },
+      ),
+    );
 
-      final response = await _apiService.dio.post(
-        ApiEndpoints.getAllVehicles,
-        options: Options(headers: {'Authorization': 'Bearer $token'}),
-        data: vehicleApiModel.toJson(),
-      );
-
-      if (response.statusCode == 201) {
-        return Future.value();
-      } else {
-        throw Exception("Failed to add vehicle: ${response.statusMessage}");
-      }
-    } on DioException catch (e) {
-      throw Exception("Failed to add vehicle: ${e.message}");
-    } catch (e) {
-      throw Exception("Unexpected error occurred while adding vehicle: $e");
+    if (response.statusCode != 201 && response.statusCode != 200) {
+      throw Exception("Failed to create booking: ${response.statusMessage}");
     }
+  } on DioException catch (e) {
+    throw Exception("Booking failed: ${e.response?.data ?? e.message}");
+  } catch (e) {
+    throw Exception("Unexpected error: $e");
   }
-
-  @override
-  Future<void> updateVehicle(String? token, String vehicleId, VehicleEntity vehicleEntity) async {
-    try {
-      final vehicleApiModel = VehicleApiModel.fromEntity(vehicleEntity);
-
-      final response = await _apiService.dio.put(
-        "${ApiEndpoints.getAllVehicles}$vehicleId",
-        options: Options(headers: {'Authorization': 'Bearer $token'}),
-        data: vehicleApiModel.toJson(),
-      );
-
-      if (response.statusCode == 200) {
-        return Future.value();
-      } else {
-        throw Exception("Failed to update vehicle: ${response.statusMessage}");
-      }
-    } on DioException catch (e) {
-      throw Exception("Failed to update vehicle: ${e.message}");
-    } catch (e) {
-      throw Exception("Unexpected error occurred while updating vehicle: $e");
-    }
-  }
-
-  @override
-  Future<void> deleteVehicle(String? token, String vehicleId) async {
-    try {
-      final response = await _apiService.dio.delete(
-        "${ApiEndpoints.getAllVehicles}$vehicleId",
-        options: Options(headers: {'Authorization': 'Bearer $token'}),
-      );
-
-      if (response.statusCode == 200) {
-        return Future.value();
-      } else {
-        throw Exception("Failed to delete vehicle: ${response.statusMessage}");
-      }
-    } on DioException catch (e) {
-      throw Exception("Failed to delete vehicle: ${e.message}");
-    } catch (e) {
-      throw Exception("Unexpected error occurred while deleting vehicle: $e");
-    }
-  }
+}
 }

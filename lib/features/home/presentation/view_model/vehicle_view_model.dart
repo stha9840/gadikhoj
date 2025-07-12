@@ -1,7 +1,6 @@
 import 'package:finalyearproject/features/home/domain/use_case/get_all_vehicles_usecase.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:finalyearproject/core/error/failure.dart';
-import 'package:finalyearproject/features/home/domain/entity/vehicle.dart';
 import 'vehicle_event.dart';
 import 'vehicle_state.dart';
 

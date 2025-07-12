@@ -18,5 +18,28 @@ class IVehicleRepository {
     }
   }
 
-  // Implement other methods similarly
+  Future<Either<Failure, void>> createBooking(
+    String? token,
+    String vehicleId, {
+    required DateTime startDate,
+    required DateTime endDate,
+    required String pickupLocation,
+    required String dropLocation,
+    required double totalPrice,
+  }) async {
+    try {
+      await _remoteDatasource.createBooking(
+        token,
+        vehicleId,
+        startDate: startDate,
+        endDate: endDate,
+        pickupLocation: pickupLocation,
+        dropLocation: dropLocation,
+        totalPrice: totalPrice,
+      );
+      return const Right(null);
+    } catch (e) {
+      return Left(ApiFailure(message: "Failed to create booking: ${e.toString()}"));
+    }
+  }
 }

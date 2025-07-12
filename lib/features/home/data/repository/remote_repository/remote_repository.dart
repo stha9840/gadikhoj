@@ -4,7 +4,7 @@ import 'package:finalyearproject/features/home/data/data_source/remote_data_sour
 import 'package:finalyearproject/features/home/domain/entity/vehicle.dart';
 import 'package:finalyearproject/features/home/domain/repository/vehicle_repository.dart';
 
-   class VehicleRemoteRepository implements IVehicleRepository {
+class VehicleRemoteRepository implements IVehicleRepository {
   final VehicleRemoteDatasource _remoteDatasource;
 
   VehicleRemoteRepository({required VehicleRemoteDatasource remoteDatasource})
@@ -18,6 +18,34 @@ import 'package:finalyearproject/features/home/domain/repository/vehicle_reposit
     } catch (e) {
       return Left(
         ApiFailure(message: "Failed to fetch vehicles: ${e.toString()}"),
+      );
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> createBooking(
+    String? token,
+    String vehicleId, {
+    required DateTime startDate,
+    required DateTime endDate,
+    required String pickupLocation,
+    required String dropLocation,
+    required double totalPrice,
+  }) async {
+    try {
+      await _remoteDatasource.createBooking(
+        token,
+        vehicleId,
+        startDate: startDate,
+        endDate: endDate,
+        pickupLocation: pickupLocation,
+        dropLocation: dropLocation,
+        totalPrice: totalPrice,
+      );
+      return const Right(null);
+    } catch (e) {
+      return Left(
+        ApiFailure(message: "Failed to create booking: ${e.toString()}"),
       );
     }
   }

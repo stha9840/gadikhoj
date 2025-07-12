@@ -1,3 +1,6 @@
+import 'package:finalyearproject/features/home/domain/use_case/create_booking_usecase.dart';
+import 'package:finalyearproject/features/home/presentation/view/booking_view.dart';
+import 'package:finalyearproject/features/home/presentation/view_model/Booking/booking_view_model.dart';
 import 'package:finalyearproject/features/home/presentation/view_model/vehicle_state.dart';
 import 'package:finalyearproject/features/home/presentation/view_model/vehicle_view_model.dart';
 import 'package:flutter/material.dart';
@@ -202,7 +205,7 @@ class HomeView extends StatelessWidget {
               // Image
               Center(
                 child: Image.network(
-                  'http://192.168.101.3:5000/uploads/${vehicle.filepath}',
+                  'http://192.168.157.46:5000/uploads/${vehicle.filepath}',
                   height: isTablet ? 160 : 120,
                   width: isTablet ? 260 : null,
                   fit: BoxFit.contain,
@@ -271,26 +274,25 @@ class HomeView extends StatelessWidget {
                   ),
                   ElevatedButton(
                     onPressed: () {
-                      // TODO: implement rent now functionality
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder:
+                              (_) => BlocProvider(
+                                create:
+                                    (context) => BookingBloc(
+                                      createBookingUsecase:
+                                          context.read<CreateBookingUsecase>(),
+                                    ),
+                                child: BookingScreen(
+                                  vehicle:
+                                      vehicle, // ✅ required parameter being passed
+                                ),
+                              ),
+                        ),
+                      );
                     },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blueAccent,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 10,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14),
-                      ),
-                    ),
-                    child: const Text(
-                      "Rent Now",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
+                    child: const Text("Rent Now"),
                   ),
                 ],
               ),

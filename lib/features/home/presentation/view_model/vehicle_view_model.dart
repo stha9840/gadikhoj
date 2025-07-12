@@ -19,8 +19,10 @@ class VehicleBloc extends Bloc<VehicleEvent, VehicleState> {
     });
   }
 
-  String _mapFailureToMessage(Failure failure) {
-    // Customize error messages based on failure type if you want
-    return failure.toString();
+ String _mapFailureToMessage(Failure failure) {
+  if (failure is ApiFailure) {
+    return failure.message;
   }
+  return 'Unexpected error';
+}
 }

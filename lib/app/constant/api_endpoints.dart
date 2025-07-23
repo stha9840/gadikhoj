@@ -18,4 +18,8 @@ class ApiEndpoints {
   // Booking
   static const String createBooking = "bookings/";
   static const String getUserBookings = "bookings/my";
+
+  static const String updateBookings = "bookings/";
+  static const String deleteBookings = "bookings/";
+  static const String cancelBookings = "bookings/";
 }

@@ -12,7 +12,11 @@ import 'package:finalyearproject/features/booking/get_booking/data/data_source/g
 import 'package:finalyearproject/features/booking/get_booking/data/data_source/remote_data_source/get_booking_remote_datasource.dart';
 import 'package:finalyearproject/features/booking/get_booking/data/repository/booking_remote_repository.dart';
 import 'package:finalyearproject/features/booking/get_booking/domain/repository/get_booking_repository.dart';
+import 'package:finalyearproject/features/booking/get_booking/domain/use_case/cancel_user_booking_use_case.dart';
+import 'package:finalyearproject/features/booking/get_booking/domain/use_case/delete_user_booking_use_case.dart';
 import 'package:finalyearproject/features/booking/get_booking/domain/use_case/get_user_booking_use_case.dart';
+import 'package:finalyearproject/features/booking/get_booking/domain/use_case/update_user_booking_use_case.dart';
+import 'package:finalyearproject/features/booking/get_booking/presentation/view_model/get_booking_event.dart';
 import 'package:finalyearproject/features/booking/get_booking/presentation/view_model/get_booking_view_model.dart';
 import 'package:finalyearproject/features/home/data/data_source/remote_data_source/vehicle_remote_data_source.dart';
 import 'package:finalyearproject/features/home/data/repository/remote_repository/remote_repository.dart';
@@ -261,15 +265,42 @@ Future<void> _initBookingModule() async {
     ),
   );
 
+    serviceLocator.registerFactory(
+    () => UpdateUserBookingUsecase(
+      bookingRepository: serviceLocator<IBookingRepository>(),
+      tokenSharedPrefs: serviceLocator<TokenSharedPrefs>(),
+    ),
+  );
+
+    serviceLocator.registerFactory(
+    () => DeleteUserBookingUsecase(
+      bookingRepository: serviceLocator<IBookingRepository>(),
+      tokenSharedPrefs: serviceLocator<TokenSharedPrefs>(),
+    ),
+  );
+
+    serviceLocator.registerFactory(
+    () => CancelUserBookingUsecase(
+      bookingRepository: serviceLocator<IBookingRepository>(),
+      tokenSharedPrefs: serviceLocator<TokenSharedPrefs>(),
+    ),
+  );
+
+
+
   serviceLocator.registerFactory<BookingBloc>(
     () => BookingBloc(
       createBookingUsecase: serviceLocator<CreateBookingUsecase>(),
     ),
   );
 
-  serviceLocator.registerLazySingleton(
-    () => GetBookingBloc(
-      getUserBookingsUsecase: serviceLocator<GetUserBookingsUsecase>(),
-    ),
-  );
+  serviceLocator.registerFactory<BookingViewModel>(
+  () => BookingViewModel(
+    getUserBookingsUsecase: serviceLocator<GetUserBookingsUsecase>(),
+    cancelUserBookingUsecase: serviceLocator<CancelUserBookingUsecase>(),
+    deleteUserBookingUsecase: serviceLocator<DeleteUserBookingUsecase>(),
+    updateUserBookingUsecase: serviceLocator<UpdateUserBookingUsecase>(),
+  ),
+);
+
 }

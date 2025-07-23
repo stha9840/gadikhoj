@@ -1,3 +1,5 @@
+import 'package:finalyearproject/features/auth/presentation/view_model/profile_view_model/view_model/profile_event.dart';
+import 'package:finalyearproject/features/auth/presentation/view_model/profile_view_model/view_model/profile_view_model.dart';
 import 'package:finalyearproject/features/home/data/data_source/remote_data_source/vehicle_remote_data_source.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -37,6 +39,9 @@ void main() async {
           ),
           BlocProvider<VehicleBloc>(
             create: (_) => serviceLocator<VehicleBloc>()..add(FetchVehiclesEvent()),
+          ),
+         BlocProvider<UserViewModel>(
+            create: (_) => serviceLocator<UserViewModel>()..add(GetUserEvent()),
           ),
         ],
         child: const MyApp(),

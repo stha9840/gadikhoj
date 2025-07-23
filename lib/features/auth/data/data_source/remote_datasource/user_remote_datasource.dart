@@ -9,7 +9,7 @@ class UserRemoteDatasource implements IUserDataSource {
   final ApiService _apiService;
 
   UserRemoteDatasource({required ApiService apiService})
-    : _apiService = apiService;
+      : _apiService = apiService;
 
   @override
   Future<String> loginUser(String email, String password) async {
@@ -49,6 +49,65 @@ class UserRemoteDatasource implements IUserDataSource {
     } on DioException catch (e) {
       final errorMessage = e.response?.data['message'] ?? e.message;
       throw Exception('Failed to register user: $errorMessage');
+    }
+  }
+
+  @override
+  Future<UserEntity> getUser(String? token) async {
+    try {
+      final response = await _apiService.dio.get(
+        ApiEndpoints.getUser,
+        options: Options(headers: {'Authorization': 'Bearer $token'}),
+      );
+      print('user reponse $response');
+
+      if (response.statusCode == 200) {
+        // --- THIS IS THE CORRECTED LINE ---
+        // We extract the user map from the 'data' key in the response.
+        final userApiModel = UserApiModel.fromJson(response.data['data']);
+        return userApiModel.toEntity();
+      } else {
+        throw Exception('Failed to get user: ${response.statusMessage}');
+      }
+    } on DioException catch (e) {
+      final errorMessage = e.response?.data['message'] ?? e.message;
+      throw Exception('Failed to get user: $errorMessage');
+    }
+  }
+
+  @override
+  Future<void> updateUser(String userId, UserEntity user, String? token) async {
+    try {
+      final userApiModel = UserApiModel.fromEntity(user);
+      final response = await _apiService.dio.put(
+        '${ApiEndpoints.updateUser}$userId',
+        data: userApiModel.toJson(),
+        options: Options(headers: {'Authorization': 'Bearer $token'}),
+      );
+
+      if (response.statusCode != 200) {
+        throw Exception('Failed to update user: ${response.statusMessage}');
+      }
+    } on DioException catch (e) {
+      final errorMessage = e.response?.data['message'] ?? e.message;
+      throw Exception('Failed to update user: $errorMessage');
+    }
+  }
+
+  @override
+  Future<void> deleteUser(String userId, String? token) async {
+    try {
+      final response = await _apiService.dio.delete(
+        '${ApiEndpoints.deleteUser}$userId',
+        options: Options(headers: {'Authorization': 'Bearer $token'}),
+      );
+
+      if (response.statusCode != 200) {
+        throw Exception('Failed to delete user: ${response.statusMessage}');
+      }
+    } on DioException catch (e) {
+      final errorMessage = e.response?.data['message'] ?? e.message;
+      throw Exception('Failed to delete user: $errorMessage');
     }
   }
 }

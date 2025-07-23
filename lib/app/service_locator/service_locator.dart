@@ -5,8 +5,12 @@ import 'package:finalyearproject/core/network/hive_service.dart';
 import 'package:finalyearproject/features/auth/data/data_source/remote_datasource/user_remote_datasource.dart';
 import 'package:finalyearproject/features/auth/data/repository/local_repository/user_local_repository.dart';
 import 'package:finalyearproject/features/auth/data/repository/remote_repository/user_remote_repository.dart';
+import 'package:finalyearproject/features/auth/domain/use_case/user_delete_usecase.dart';
+import 'package:finalyearproject/features/auth/domain/use_case/user_get_usecase.dart';
 import 'package:finalyearproject/features/auth/domain/use_case/user_login_usecase.dart';
 import 'package:finalyearproject/features/auth/domain/use_case/user_register_usecase.dart';
+import 'package:finalyearproject/features/auth/domain/use_case/user_update_usecase.dart';
+import 'package:finalyearproject/features/auth/presentation/view_model/profile_view_model/view_model/profile_view_model.dart';
 import 'package:finalyearproject/features/auth/presentation/view_model/register_view_model/register_view_model.dart';
 import 'package:finalyearproject/features/booking/get_booking/data/data_source/get_booking_datasource.dart';
 import 'package:finalyearproject/features/booking/get_booking/data/data_source/remote_data_source/get_booking_remote_datasource.dart';
@@ -64,6 +68,9 @@ Future<void> _initSharedPrefs() async {
       ),
     );
   }
+
+
+
 }
 
 Future<void> _initAuthModule() async {
@@ -87,7 +94,7 @@ Future<void> _initAuthModule() async {
 
   serviceLocator.registerFactory(
     () => UserRemoteRepository(
-      userremoteDatasoource: serviceLocator<UserRemoteDatasource>(),
+      userRemoteDatasource: serviceLocator<UserRemoteDatasource>(),
     ),
   );
 
@@ -105,12 +112,41 @@ Future<void> _initAuthModule() async {
   );
 
   serviceLocator.registerFactory(
+    () => GetUserUseCase(
+      iUserRepository: serviceLocator<UserRemoteRepository>(),
+      tokenSharedPrefs: serviceLocator<TokenSharedPrefs>(),
+    ),
+  );
+
+  serviceLocator.registerFactory(
+    () => UpdateUserUseCase(
+      iUserRepository: serviceLocator<UserRemoteRepository>(),
+      tokenSharedPrefs: serviceLocator<TokenSharedPrefs>(),
+    ),
+  );
+
+  serviceLocator.registerFactory(
+    () => DeleteUserUseCase(
+      iUserRepository: serviceLocator<UserRemoteRepository>(),
+      tokenSharedPrefs: serviceLocator<TokenSharedPrefs>(),
+    ),
+  );
+
+  serviceLocator.registerFactory(
     () => LoginViewModel(userLoginUsecase: serviceLocator()),
   );
 
   serviceLocator.registerFactory(
     () => RegisterViewModel(
       registerUsecase: serviceLocator<RegisterUserUseCase>(),
+    ),
+  );
+
+  serviceLocator.registerFactory(
+    () => UserViewModel(
+      getUserUseCase: serviceLocator<GetUserUseCase>(),
+      updateUserUseCase: serviceLocator<UpdateUserUseCase>(),
+      deleteUserUseCase: serviceLocator<DeleteUserUseCase>(),
     ),
   );
 }
@@ -202,7 +238,6 @@ Future<void> _initVehicleModule() async {
 //     ),
 //   );
 
-
 //   if (!serviceLocator.isRegistered<CreateBookingUsecase>()) {
 //     serviceLocator.registerLazySingleton<CreateBookingUsecase>(
 //       () => CreateBookingUsecase(
@@ -236,7 +271,8 @@ Future<void> _initBookingModule() async {
   // Register the remote datasource if not registered
   if (!serviceLocator.isRegistered<GetBookingRemoteDatasource>()) {
     serviceLocator.registerLazySingleton<GetBookingRemoteDatasource>(
-      () => GetBookingRemoteDatasource(apiService: serviceLocator<ApiService>()),
+      () =>
+          GetBookingRemoteDatasource(apiService: serviceLocator<ApiService>()),
     );
   }
 
@@ -265,28 +301,26 @@ Future<void> _initBookingModule() async {
     ),
   );
 
-    serviceLocator.registerFactory(
+  serviceLocator.registerFactory(
     () => UpdateUserBookingUsecase(
       bookingRepository: serviceLocator<IBookingRepository>(),
       tokenSharedPrefs: serviceLocator<TokenSharedPrefs>(),
     ),
   );
 
-    serviceLocator.registerFactory(
+  serviceLocator.registerFactory(
     () => DeleteUserBookingUsecase(
       bookingRepository: serviceLocator<IBookingRepository>(),
       tokenSharedPrefs: serviceLocator<TokenSharedPrefs>(),
     ),
   );
 
-    serviceLocator.registerFactory(
+  serviceLocator.registerFactory(
     () => CancelUserBookingUsecase(
       bookingRepository: serviceLocator<IBookingRepository>(),
       tokenSharedPrefs: serviceLocator<TokenSharedPrefs>(),
     ),
   );
-
-
 
   serviceLocator.registerFactory<BookingBloc>(
     () => BookingBloc(
@@ -295,12 +329,11 @@ Future<void> _initBookingModule() async {
   );
 
   serviceLocator.registerFactory<BookingViewModel>(
-  () => BookingViewModel(
-    getUserBookingsUsecase: serviceLocator<GetUserBookingsUsecase>(),
-    cancelUserBookingUsecase: serviceLocator<CancelUserBookingUsecase>(),
-    deleteUserBookingUsecase: serviceLocator<DeleteUserBookingUsecase>(),
-    updateUserBookingUsecase: serviceLocator<UpdateUserBookingUsecase>(),
-  ),
-);
-
+    () => BookingViewModel(
+      getUserBookingsUsecase: serviceLocator<GetUserBookingsUsecase>(),
+      cancelUserBookingUsecase: serviceLocator<CancelUserBookingUsecase>(),
+      deleteUserBookingUsecase: serviceLocator<DeleteUserBookingUsecase>(),
+      updateUserBookingUsecase: serviceLocator<UpdateUserBookingUsecase>(),
+    ),
+  );
 }

@@ -32,4 +32,22 @@ class UserLocalRepository implements IUserRepository {
       return Left(LocalDataBaseFailure(message: "Registration failed: $e"));
     }
   }
+  
+  @override
+  Future<Either<Failure, void>> deleteUser(String userId, String? token) {
+    // TODO: implement deleteUser
+    throw UnimplementedError();
+  }
+  
+  @override
+  Future<Either<Failure, UserEntity>> getUser( String? token) {
+    // TODO: implement getUser
+    throw UnimplementedError();
+  }
+  
+  @override
+  Future<Either<Failure, void>> updateUser(String userId, UserEntity user, String? token) {
+    // TODO: implement updateUser
+    throw UnimplementedError();
+  }
 }

@@ -1,31 +1,37 @@
 import 'package:equatable/equatable.dart';
-import 'package:finalyearproject/features/home/domain/entity/vehicle.dart';
+import 'package:finalyearproject/features/home/domain/entity/vehicle.dart'; // Ensure this path is correct
 import 'package:json_annotation/json_annotation.dart';
 
 part 'vehicle_api_model.g.dart';
 
+/// Data model representing a Vehicle from the API.
+///
+/// This model is designed to be robust against incomplete API data. All fields
+/// are nullable to prevent parsing errors if the server sends a null value.
 @JsonSerializable()
 class VehicleApiModel extends Equatable {
   @JsonKey(name: '_id')
   final String? id;
-  final String vehicleName;
-  final String vehicleType;
-  final int fuelCapacityLitres;
-  final int loadCapacityKg;
-  final String passengerCapacity;
-  final double pricePerTrip;
-  final String filepath;
+
+  // FIX: All fields are made nullable to prevent crashes.
+  final String? vehicleName;
+  final String? vehicleType;
+  final String? passengerCapacity;
+  final String? filepath;
   final String? vehicleDescription;
+  final int? fuelCapacityLitres;
+  final int? loadCapacityKg;
+  final double? pricePerTrip;
 
   const VehicleApiModel({
     this.id,
-    required this.vehicleName,
-    required this.vehicleType,
-    required this.fuelCapacityLitres,
-    required this.loadCapacityKg,
-    required this.passengerCapacity,
-    required this.pricePerTrip,
-    required this.filepath,
+    this.vehicleName,
+    this.vehicleType,
+    this.fuelCapacityLitres,
+    this.loadCapacityKg,
+    this.passengerCapacity,
+    this.pricePerTrip,
+    this.filepath,
     this.vehicleDescription,
   });
 
@@ -34,17 +40,21 @@ class VehicleApiModel extends Equatable {
 
   Map<String, dynamic> toJson() => _$VehicleApiModelToJson(this);
 
+  /// Converts this data model into a clean, non-nullable domain entity.
+  /// Default values are provided for any null fields from the API.
   VehicleEntity toEntity() {
     return VehicleEntity(
-      id: id,
-      vehicleName: vehicleName,
-      vehicleType: vehicleType,
-      fuelCapacityLitres: fuelCapacityLitres,
-      loadCapacityKg: loadCapacityKg,
-      passengerCapacity: passengerCapacity,
-      pricePerTrip: pricePerTrip,
-      filepath: filepath,
-      vehicleDescription: vehicleDescription,
+      // Use the null-coalescing operator (??) to provide defaults.
+      id: id ?? '',
+      vehicleName: vehicleName ?? 'Unnamed Vehicle',
+      vehicleType: vehicleType ?? 'N/A',
+      filepath: filepath ?? '',
+      vehicleDescription: vehicleDescription ?? 'No description available.',
+      fuelCapacityLitres: fuelCapacityLitres ?? 0,
+      loadCapacityKg: loadCapacityKg ?? 0,
+      passengerCapacity: passengerCapacity ?? '0',
+      // FIX: Use 0.0 for double default value.
+      pricePerTrip: pricePerTrip ?? 0.0,
     );
   }
 
@@ -62,6 +72,7 @@ class VehicleApiModel extends Equatable {
     );
   }
 
+  /// Converts a list of API models to a list of domain entities.
   static List<VehicleEntity> toEntityList(List<VehicleApiModel> models) {
     return models.map((model) => model.toEntity()).toList();
   }

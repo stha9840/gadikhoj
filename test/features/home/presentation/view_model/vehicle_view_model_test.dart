@@ -41,7 +41,7 @@ void main() {
   },
   act: (bloc) => bloc.add(FetchVehiclesEvent()),
   expect: () => [
-    VehicleLoading(),
+    VehicleLoading(), 
     VehicleError('API request failed'),
   ],
   verify: (_) => verify(() => mockUsecase()).called(1),

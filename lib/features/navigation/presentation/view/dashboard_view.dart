@@ -1,3 +1,4 @@
+import 'package:finalyearproject/features/booking/get_booking/presentation/view/get_booking_view.dart';
 import 'package:finalyearproject/features/booking/presentation/view/booking_view.dart';
 import 'package:finalyearproject/features/home/presentation/view/home_view.dart';
 
@@ -18,7 +19,7 @@ class _DashboardViewState extends State<DashboardView> {
 
   List<Widget> lstBottomScreen = [
     const HomeView(),
-    const BookingView(),
+    const GetBookingView(),
     const NotificationsView(),
     const ProfileView(),
   ];

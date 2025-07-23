@@ -1,4 +1,3 @@
-
 import 'package:finalyearproject/features/booking/get_booking/domain/use_case/cancel_user_booking_use_case.dart';
 import 'package:finalyearproject/features/booking/get_booking/domain/use_case/delete_user_booking_use_case.dart';
 import 'package:finalyearproject/features/booking/get_booking/domain/use_case/get_user_booking_use_case.dart';
@@ -18,11 +17,11 @@ class BookingViewModel extends Bloc<BookingEvent, BookingState> {
     required CancelUserBookingUsecase cancelUserBookingUsecase,
     required DeleteUserBookingUsecase deleteUserBookingUsecase,
     required UpdateUserBookingUsecase updateUserBookingUsecase,
-  })  : _getUserBookingsUsecase = getUserBookingsUsecase,
-        _cancelUserBookingUsecase = cancelUserBookingUsecase,
-        _deleteUserBookingUsecase = deleteUserBookingUsecase,
-        _updateUserBookingUsecase = updateUserBookingUsecase,
-        super(BookingInitial()) {
+  }) : _getUserBookingsUsecase = getUserBookingsUsecase,
+       _cancelUserBookingUsecase = cancelUserBookingUsecase,
+       _deleteUserBookingUsecase = deleteUserBookingUsecase,
+       _updateUserBookingUsecase = updateUserBookingUsecase,
+       super(BookingInitial()) {
     // Handler for fetching user bookings
     on<GetUserBookings>((event, emit) async {
       emit(BookingLoading());
@@ -56,7 +55,7 @@ class BookingViewModel extends Bloc<BookingEvent, BookingState> {
     // Handler for updating a booking
     on<UpdateBooking>((event, emit) async {
       emit(BookingLoading());
-      final params = UpdateBookingParams(id: event.bookingId, data: event.data);
+      final params = UpdateBookingParams(id: event.id, data: event.data);
       final result = await _updateUserBookingUsecase(params);
       result.fold(
         (failure) => emit(BookingError(failure.message)),

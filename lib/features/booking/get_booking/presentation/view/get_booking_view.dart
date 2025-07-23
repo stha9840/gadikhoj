@@ -1,4 +1,5 @@
 import 'package:finalyearproject/app/service_locator/service_locator.dart';
+import 'package:finalyearproject/features/booking/get_booking/presentation/view/update_booking_view.dart';
 import 'package:finalyearproject/features/booking/get_booking/presentation/view_model/get_booking_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -388,7 +389,14 @@ class BookingDetailsPage extends StatelessWidget {
                             ],
                           ),
                         ),
-                        _buildStatusChip(booking.status),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            _buildStatusChip(booking.status),
+                            const SizedBox(width: 8),
+                            _buildActionButtons(context),
+                          ],
+                        ),
                       ],
                     ),
                     const SizedBox(height: 20),
@@ -425,8 +433,6 @@ class BookingDetailsPage extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 30),
-                    // ✅ NEW: Action buttons section
-                    _buildActionButtons(context),
                   ],
                 ),
               ),
@@ -437,69 +443,126 @@ class BookingDetailsPage extends StatelessWidget {
     );
   }
 
-  // ✅ NEW: Widget to build action buttons
   Widget _buildActionButtons(BuildContext context) {
-    // Only show buttons if the booking is in a cancellable state
     final bool canCancel =
         booking.status != 'cancelled' && booking.status != 'completed';
 
-    if (!canCancel) {
-      return const SizedBox.shrink(); // Don't show any buttons
-    }
+    if (!canCancel) return const SizedBox.shrink();
 
-    return Row(
-      children: [
-        Expanded(
-          child: OutlinedButton.icon(
-            icon: const Icon(Icons.cancel_outlined),
-            label: const Text("Cancel Booking"),
-            onPressed: () {
-              _showConfirmationDialog(
-                context: context,
-                title: "Cancel Booking?",
-                content: "Are you sure you want to cancel this booking?",
-                onConfirm: () {
-                  // Dispatch the cancel event
-                  context.read<BookingViewModel>().add(
-                    CancelBooking(booking.id!),
-                  );
-                },
-              );
-            },
-            style: OutlinedButton.styleFrom(
-              foregroundColor: Colors.red,
-              side: const BorderSide(color: Colors.red),
-              padding: const EdgeInsets.symmetric(vertical: 12),
+    return PopupMenuButton<String>(
+      icon: Icon(Icons.more_vert, color: Colors.grey.shade600, size: 20),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      elevation: 2,
+      offset: const Offset(0, 8),
+      color: Colors.white,
+      onSelected: (value) {
+        switch (value) {
+          case 'cancel':
+            _showConfirmationDialog(
+              context: context,
+              title: "Cancel Booking?",
+              content: "Are you sure you want to cancel this booking?",
+              onConfirm: () {
+                context.read<BookingViewModel>().add(
+                  CancelBooking(booking.id!),
+                );
+              },
+            );
+            break;
+          case 'delete':
+            _showConfirmationDialog(
+              context: context,
+              title: "Delete Booking?",
+              content: "This action cannot be undone. Proceed?",
+              onConfirm: () {
+                context.read<BookingViewModel>().add(
+                  DeleteBooking(booking.id!),
+                );
+              },
+            );
+            break;
+          case 'edit':
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder:
+                    (_) => BlocProvider.value(
+                      value: context.read<BookingViewModel>(),
+                      child: UpdateBookingView(booking: booking),
+                    ),
+              ),
+            );
+            break;
+        }
+      },
+      itemBuilder:
+          (BuildContext context) => [
+            PopupMenuItem<String>(
+              value: 'edit',
+              height: 44,
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.edit_outlined,
+                    color: Colors.grey.shade700,
+                    size: 18,
+                  ),
+                  const SizedBox(width: 12),
+                  Text(
+                    'Edit',
+                    style: TextStyle(
+                      color: Colors.grey.shade800,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ),
-        const SizedBox(width: 16),
-        Expanded(
-          child: OutlinedButton.icon(
-            icon: const Icon(Icons.delete_outline),
-            label: const Text("Delete"),
-            onPressed: () {
-              _showConfirmationDialog(
-                context: context,
-                title: "Delete Booking?",
-                content:
-                    "This action is permanent and cannot be undone. Are you sure?",
-                onConfirm: () {
-                  // Dispatch the delete event
-                  context.read<BookingViewModel>().add(
-                    DeleteBooking(booking.id!),
-                  );
-                },
-              );
-            },
-            style: OutlinedButton.styleFrom(
-              foregroundColor: Colors.black54,
-              side: const BorderSide(color: Colors.black54),
-              padding: const EdgeInsets.symmetric(vertical: 12),
+            PopupMenuItem<String>(
+              value: 'cancel',
+              height: 44,
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.cancel_outlined,
+                    color: Colors.orange.shade600,
+                    size: 18,
+                  ),
+                  const SizedBox(width: 12),
+                  Text(
+                    'Cancel',
+                    style: TextStyle(
+                      color: Colors.grey.shade800,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ),
-      ],
+            PopupMenuItem<String>(
+              value: 'delete',
+              height: 44,
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.delete_outline,
+                    color: Colors.red.shade500,
+                    size: 18,
+                  ),
+                  const SizedBox(width: 12),
+                  Text(
+                    'Delete',
+                    style: TextStyle(
+                      color: Colors.grey.shade800,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
     );
   }
 

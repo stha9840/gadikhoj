@@ -32,13 +32,13 @@ class DeleteBooking extends BookingEvent {
   List<Object> get props => [bookingId];
 }
 
-// Event to update a specific booking
 class UpdateBooking extends BookingEvent {
-  final String bookingId;
+  final String id;
   final Map<String, dynamic> data;
 
-  const UpdateBooking(this.bookingId, this.data);
+  const UpdateBooking({
+    required this.id,
+    required this.data,
+  });
 
-  @override
-  List<Object> get props => [bookingId, data];
 }

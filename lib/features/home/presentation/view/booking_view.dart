@@ -116,7 +116,7 @@ class _BookingScreenState extends State<BookingScreen> {
                   // Job Card-like Details
                   Center(
                     child: Image.network(
-                      'http://192.168.101.4:5000/uploads/${vehicle.filepath}',
+                      'http://192.168.101.6:5000/uploads/${vehicle.filepath}',
                       height: 140,
                       fit: BoxFit.contain,
                       errorBuilder:

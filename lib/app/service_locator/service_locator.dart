@@ -29,6 +29,13 @@ import 'package:finalyearproject/features/home/domain/use_case/create_booking_us
 import 'package:finalyearproject/features/home/domain/use_case/get_all_vehicles_usecase.dart';
 import 'package:finalyearproject/features/home/presentation/view_model/Booking/booking_view_model.dart';
 import 'package:finalyearproject/features/home/presentation/view_model/vehicle_view_model.dart';
+import 'package:finalyearproject/features/saved_vechile/data/data_source/saved_vechile_remote_data_source.dart';
+import 'package:finalyearproject/features/saved_vechile/data/repository/saved_vechile_remote_repository.dart';
+import 'package:finalyearproject/features/saved_vechile/domain/repository/saved_vechile_repository.dart';
+import 'package:finalyearproject/features/saved_vechile/domain/usecase/add_saved_vechile_usecase.dart';
+import 'package:finalyearproject/features/saved_vechile/domain/usecase/get_saved_vechile_usecase.dart';
+import 'package:finalyearproject/features/saved_vechile/domain/usecase/remove_saved_vechile_usecase.dart';
+import 'package:finalyearproject/features/saved_vechile/presentation/view_model/saved_vechile_view_model.dart';
 import 'package:get_it/get_it.dart';
 import 'package:finalyearproject/features/splash/presentation/view_model/splash_view_model.dart';
 import 'package:finalyearproject/features/auth/presentation/view_model/login_view_model/login_view_model.dart';
@@ -47,6 +54,7 @@ Future<void> setupLocator() async {
   await _initSplashModule();
   await _initVehicleModule(); // ✅ Registers VehicleRemoteDatasource only here
   await _initBookingModule(); // ✅ No duplicate registration
+  await _initSavedVehicleModule();
 }
 
 Future<void> _initHiveService() async {
@@ -334,6 +342,48 @@ Future<void> _initBookingModule() async {
       cancelUserBookingUsecase: serviceLocator<CancelUserBookingUsecase>(),
       deleteUserBookingUsecase: serviceLocator<DeleteUserBookingUsecase>(),
       updateUserBookingUsecase: serviceLocator<UpdateUserBookingUsecase>(),
+    ),
+  );
+}
+
+Future<void> _initSavedVehicleModule() async {
+  // --- DATA SOURCE ---
+  // Register the data source as a lazy singleton since it's likely to be reused.
+  serviceLocator.registerLazySingleton<SavedVehicleRemoteDataSource>(
+    () => SavedVehicleRemoteDataSource(apiService: serviceLocator<ApiService>()),
+  );
+
+  // --- REPOSITORY ---
+  // Register the repository implementation against its interface (ISavedVehicleRepository).
+  serviceLocator.registerLazySingleton<ISavedVehicleRepository>(
+    () => SavedVehicleRepositoryImpl(
+      dataSource: serviceLocator<SavedVehicleRemoteDataSource>(),
+    ),
+  );
+
+  // --- USE CASES ---
+  // Use cases are typically registered as factories because they have a single method
+  // and hold no state, so creating a new instance each time is lightweight.
+  serviceLocator.registerFactory<GetSavedVehiclesUsecase>(
+    () => GetSavedVehiclesUsecase(repository: serviceLocator<ISavedVehicleRepository>(), tokenSharedPrefs: serviceLocator<TokenSharedPrefs>()),
+  );
+
+  serviceLocator.registerFactory<AddSavedVehicleUsecase>(
+    () => AddSavedVehicleUsecase(repository: serviceLocator<ISavedVehicleRepository>() , tokenSharedPrefs: serviceLocator<TokenSharedPrefs>()),
+  );
+
+  serviceLocator.registerFactory<RemoveSavedVehicleUsecase>(
+    () => RemoveSavedVehicleUsecase(repository: serviceLocator<ISavedVehicleRepository>() ,  tokenSharedPrefs: serviceLocator<TokenSharedPrefs>()),
+  );
+
+  // --- BLOC ---
+  // Blocs are registered as factories because they manage state and should be created
+  // fresh for each part of the UI that needs them to avoid state conflicts.
+  serviceLocator.registerFactory<SavedVehicleBloc>(
+    () => SavedVehicleBloc(
+      getSavedVehiclesUsecase: serviceLocator<GetSavedVehiclesUsecase>(),
+      addSavedVehicleUsecase: serviceLocator<AddSavedVehicleUsecase>(),
+      removeSavedVehicleUsecase: serviceLocator<RemoveSavedVehicleUsecase>(),
     ),
   );
 }

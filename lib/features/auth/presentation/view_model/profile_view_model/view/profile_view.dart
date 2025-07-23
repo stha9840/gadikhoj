@@ -201,7 +201,7 @@ class _ProfileViewState extends State<ProfileView> {
                                 controller: _usernameController,
                                 enabled: _isEditing,
                                 decoration: InputDecoration(
-                                  labelText: 'First Name',
+                                  labelText: 'Username',
                                   prefixIcon: const Icon(Icons.person_outline),
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(12),

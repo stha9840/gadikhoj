@@ -23,8 +23,13 @@ class ApiEndpoints {
   static const String deleteBookings = "bookings/";
   static const String cancelBookings = "bookings/";
 
-   // User
-  static const String getUser = "auth/me";     
-  static const String updateUser = "auth/";    
+  // User
+  static const String getUser = "auth/me";
+  static const String updateUser = "auth/";
   static const String deleteUser = "auth/";
+
+  //saved vechile
+  static const String addSavedVechile = "saved-vehicles/";
+  static const String getSavedVechile = "saved-vehicles/";
+  static const String removeSavedVechile = "saved-vehicles/";
 }

@@ -1,6 +1,8 @@
 import 'package:finalyearproject/features/auth/presentation/view_model/profile_view_model/view_model/profile_event.dart';
 import 'package:finalyearproject/features/auth/presentation/view_model/profile_view_model/view_model/profile_view_model.dart';
 import 'package:finalyearproject/features/home/data/data_source/remote_data_source/vehicle_remote_data_source.dart';
+import 'package:finalyearproject/features/saved_vechile/presentation/view_model/saved_vechile_event.dart';
+import 'package:finalyearproject/features/saved_vechile/presentation/view_model/saved_vechile_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';  
@@ -43,6 +45,11 @@ void main() async {
          BlocProvider<UserViewModel>(
             create: (_) => serviceLocator<UserViewModel>()..add(GetUserEvent()),
           ),
+
+           BlocProvider<SavedVehicleBloc>(
+            create: (_) => serviceLocator<SavedVehicleBloc>()..add(GetSavedVehicles()),
+          ),
+
         ],
         child: const MyApp(),
       ),

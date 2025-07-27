@@ -1,3 +1,4 @@
+import 'package:finalyearproject/features/home/presentation/view/booking_view.dart';
 import 'package:finalyearproject/features/saved_vechile/domain/entity/saved_vechile_entity.dart';
 import 'package:finalyearproject/features/saved_vechile/presentation/view_model/saved_vechile_event.dart';
 import 'package:finalyearproject/features/saved_vechile/presentation/view_model/saved_vechile_state.dart';
@@ -116,40 +117,31 @@ class _FavouriteViewState extends State<FavouriteView> {
           padding: const EdgeInsets.all(14),
           child: Column(
             children: [
-              // Title + Delete
+              // Title
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        vehicle.vehicleName,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          vehicle.vehicleName,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        vehicle.vehicleType,
-                        style: const TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey,
+                        const SizedBox(height: 4),
+                        Text(
+                          vehicle.vehicleType,
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey,
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                  IconButton(
-                    icon: const Icon(
-                      Icons.delete_outline,
-                      color: Colors.redAccent,
+                      ],
                     ),
-                    onPressed: () {
-                      context.read<SavedVehicleBloc>().add(
-                        RemoveVehicleFromSaved(vehicleId: vehicle.id!),
-                      );
-                    },
                   ),
                 ],
               ),
@@ -159,7 +151,7 @@ class _FavouriteViewState extends State<FavouriteView> {
               ClipRRect(
                 borderRadius: BorderRadius.circular(12),
                 child: Image.network(
-                  'http://192.168.101.6:5000/uploads/${vehicle.filepath}',
+                  'http://192.168.101.3:5000/uploads/${vehicle.filepath}',
                   height: 150,
                   fit: BoxFit.contain,
                   errorBuilder:
@@ -199,27 +191,70 @@ class _FavouriteViewState extends State<FavouriteView> {
               ),
               const SizedBox(height: 12),
 
-              // Price
-              Align(
-                alignment: Alignment.centerLeft,
-                child: RichText(
-                  text: TextSpan(
-                    children: [
-                      TextSpan(
-                        text: "Npr ${vehicle.pricePerTrip.toStringAsFixed(0)} ",
-                        style: const TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
+              // Price and Buttons Row
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // Price
+                  RichText(
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text:
+                              "Npr ${vehicle.pricePerTrip.toStringAsFixed(0)} ",
+                          style: const TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
                         ),
+                        const TextSpan(
+                          text: "/ trip",
+                          style: TextStyle(color: Colors.grey, fontSize: 14),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  // Buttons: Remove & Book Now
+                  Row(
+                    children: [
+                      TextButton(
+                        onPressed: () {
+                          context.read<SavedVehicleBloc>().add(
+                            RemoveVehicleFromSaved(vehicleId: vehicle.id!),
+                          );
+                        },
+                        style: TextButton.styleFrom(
+                          foregroundColor: Colors.redAccent,
+                        ),
+                        child: const Text("Remove"),
                       ),
-                      const TextSpan(
-                        text: "/ trip",
-                        style: TextStyle(color: Colors.grey, fontSize: 14),
+                      const SizedBox(width: 8),
+                      ElevatedButton(
+                        onPressed: () {
+                          // Navigator.push(
+                          //   context,
+                          //   MaterialPageRoute(
+                          //     builder: (_) => BookingScreen(vehicle: vehicle),
+                          //   ),
+                          // );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blue[600],
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 8,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: const Text("Book Now"),
                       ),
                     ],
                   ),
-                ),
+                ],
               ),
             ],
           ),

@@ -2,6 +2,8 @@ import 'package:finalyearproject/features/home/domain/entity/vehicle.dart';
 import 'package:finalyearproject/features/home/domain/use_case/create_booking_usecase.dart';
 import 'package:finalyearproject/features/home/presentation/view/booking_view.dart';
 import 'package:finalyearproject/features/home/presentation/view_model/Booking/booking_view_model.dart';
+// CHANGE: Import the vehicle event to dispatch it
+import 'package:finalyearproject/features/home/presentation/view_model/vehicle_event.dart';
 import 'package:finalyearproject/features/home/presentation/view_model/vehicle_state.dart';
 import 'package:finalyearproject/features/home/presentation/view_model/vehicle_view_model.dart';
 import 'package:finalyearproject/features/saved_vechile/presentation/view_model/saved_vechile_event.dart';
@@ -18,8 +20,6 @@ class HomeView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      // BlocListener listens for state changes for side-effects like showing a SnackBar.
-      // It does not rebuild the UI.
       body: BlocListener<SavedVehicleBloc, SavedVehicleState>(
         listener: (context, state) {
           if (state is SavedVehicleActionSuccess) {
@@ -35,18 +35,17 @@ class HomeView extends StatelessWidget {
         child: SafeArea(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8),
-            // BlocBuilder rebuilds the UI based on the VehicleBloc's state.
             child: BlocBuilder<VehicleBloc, VehicleState>(
               builder: (context, state) {
                 if (state is VehicleLoading) {
                   return const Center(child: CircularProgressIndicator());
                 } else if (state is VehicleLoaded) {
-                  final vehicles = state.vehicles;
+                  // CHANGE: The UI now uses the properties from the updated VehicleLoaded state
                   return SingleChildScrollView(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Top Row (Location + Profile)
+                        // Top Row (Location + Profile) - No changes here
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -72,7 +71,7 @@ class HomeView extends StatelessWidget {
                         ),
                         const SizedBox(height: 16),
 
-                        // Search Bar
+                        // Search Bar - No changes here
                         TextField(
                           decoration: InputDecoration(
                             hintText: "Search Vehicle",
@@ -92,29 +91,29 @@ class HomeView extends StatelessWidget {
                         const Text("Vehicle Type", style: TextStyle(color: Colors.grey, fontSize: 13, fontWeight: FontWeight.w500)),
                         const SizedBox(height: 6),
 
-                        // Filter Chips
+                        // CHANGE: Filter chips are now built dynamically from the state
                         SingleChildScrollView(
                           scrollDirection: Axis.horizontal,
                           child: Row(
-                            children: [
-                              _buildFilterChip("All", selected: true),
-                              _buildFilterChip("Car"),
-                              _buildFilterChip("Truck"),
-                              _buildFilterChip("Micro"),
-                            ],
+                            children: state.vehicleTypes.map((type) {
+                              return _buildFilterChip(
+                                context,
+                                type,
+                                selected: type == state.selectedType,
+                              );
+                            }).toList(),
                           ),
                         ),
                         const SizedBox(height: 14),
 
-                        // Vehicle cards built dynamically
-                        ...vehicles.map((vehicle) => _buildVehicleCard(context, vehicle)),
+                        // CHANGE: Vehicle cards are built from the filtered list
+                        ...state.filteredVehicles.map((vehicle) => _buildVehicleCard(context, vehicle)),
                       ],
                     ),
                   );
                 } else if (state is VehicleError) {
                   return Center(child: Text(state.message));
                 } else {
-                  // Initial or unknown state
                   return const Center(child: Text("Please wait..."));
                 }
               },
@@ -125,21 +124,32 @@ class HomeView extends StatelessWidget {
     );
   }
 
-  Widget _buildFilterChip(String label, {bool selected = false}) {
+  // CHANGE: Updated to be a ChoiceChip that dispatches an event on tap
+  Widget _buildFilterChip(BuildContext context, String label, {bool selected = false}) {
     return Padding(
       padding: const EdgeInsets.only(right: 8.0),
-      child: Chip(
-        label: Text(label, style: const TextStyle(fontSize: 12)),
+      child: ChoiceChip(
+        label: Text(label),
+        selected: selected,
+        onSelected: (isSelected) {
+          if (isSelected) {
+            // Dispatch the event to the BLoC to filter the list
+            context.read<VehicleBloc>().add(FilterVehiclesEvent(label));
+          }
+        },
         labelStyle: TextStyle(
           color: selected ? Colors.white : Colors.black87,
           fontWeight: FontWeight.w500,
         ),
-        backgroundColor: selected ? Colors.blueAccent : Colors.grey.shade200,
+        backgroundColor: Colors.grey.shade200,
+        selectedColor: Colors.blueAccent,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        showCheckmark: false, // Hides the default checkmark
       ),
     );
   }
 
+  // NOTE: No changes are needed for the _buildVehicleCard widget
   Widget _buildVehicleCard(BuildContext context, VehicleEntity vehicle) {
     return Container(
       padding: const EdgeInsets.all(11),
@@ -170,11 +180,9 @@ class HomeView extends StatelessWidget {
                   Text(vehicle.vehicleType, style: const TextStyle(color: Colors.grey, fontSize: 11.5)),
                 ],
               ),
-              // This BlocBuilder rebuilds ONLY the icon when the saved vehicle list changes.
               BlocBuilder<SavedVehicleBloc, SavedVehicleState>(
                 builder: (context, savedState) {
                   bool isSaved = false;
-                  // Check the success state to see if this vehicle is in the saved list.
                   if (savedState is SavedVehicleSuccess) {
                     isSaved = savedState.savedVehicles.any((saved) => saved.vehicle.id == vehicle.id);
                   }
@@ -185,8 +193,7 @@ class HomeView extends StatelessWidget {
                       size: 24,
                     ),
                     onPressed: () {
-                      if (vehicle.id == null) return; // Guard against null ID
-                      // Dispatch the appropriate event to the SavedVehicleBloc.
+                      if (vehicle.id == null) return;
                       if (isSaved) {
                         context.read<SavedVehicleBloc>().add(RemoveVehicleFromSaved(vehicleId: vehicle.id!));
                       } else {
@@ -203,7 +210,7 @@ class HomeView extends StatelessWidget {
           // Image
           Center(
             child: Image.network(
-              'http://192.168.101.6:5000/uploads/${vehicle.filepath}',
+              'http://192.168.101.3:5000/uploads/${vehicle.filepath}',
               height: 120,
               fit: BoxFit.contain,
               errorBuilder: (context, error, stackTrace) => const Icon(Icons.broken_image, size: 100),
@@ -268,6 +275,7 @@ class HomeView extends StatelessWidget {
   }
 }
 
+// NOTE: No changes are needed for the IconText widget
 class IconText extends StatelessWidget {
   final IconData icon;
   final String text;

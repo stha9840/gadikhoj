@@ -15,6 +15,9 @@ import 'package:finalyearproject/features/home/presentation/view_model/vehicle_e
 import 'package:finalyearproject/features/home/presentation/view_model/vehicle_view_model.dart';
 import 'package:get_it/get_it.dart';
 
+
+
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 

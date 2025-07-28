@@ -2,7 +2,6 @@ import 'package:finalyearproject/features/home/domain/entity/vehicle.dart';
 import 'package:finalyearproject/features/home/domain/use_case/create_booking_usecase.dart';
 import 'package:finalyearproject/features/home/presentation/view/booking_view.dart';
 import 'package:finalyearproject/features/home/presentation/view_model/Booking/booking_view_model.dart';
-// CHANGE: Import the vehicle event to dispatch it
 import 'package:finalyearproject/features/home/presentation/view_model/vehicle_event.dart';
 import 'package:finalyearproject/features/home/presentation/view_model/vehicle_state.dart';
 import 'package:finalyearproject/features/home/presentation/view_model/vehicle_view_model.dart';
@@ -13,8 +12,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-class HomeView extends StatelessWidget {
+class HomeView extends StatefulWidget {
   const HomeView({super.key});
+
+  @override
+  State<HomeView> createState() => _HomeViewState();
+}
+
+class _HomeViewState extends State<HomeView> {
+  final _searchController = TextEditingController();
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,11 +37,11 @@ class HomeView extends StatelessWidget {
           if (state is SavedVehicleActionSuccess) {
             ScaffoldMessenger.of(context)
               ..hideCurrentSnackBar()
-              ..showSnackBar(SnackBar(content: Text(state.message), duration: const Duration(seconds: 2),));
+              ..showSnackBar(SnackBar(content: Text(state.message), duration: const Duration(seconds: 2)));
           } else if (state is SavedVehicleError) {
             ScaffoldMessenger.of(context)
               ..hideCurrentSnackBar()
-              ..showSnackBar(SnackBar(backgroundColor: Colors.black, content: Text(state.message), duration: const Duration(seconds: 2),));
+              ..showSnackBar(SnackBar(backgroundColor: Colors.black, content: Text(state.message), duration: const Duration(seconds: 2)));
           }
         },
         child: SafeArea(
@@ -40,12 +52,11 @@ class HomeView extends StatelessWidget {
                 if (state is VehicleLoading) {
                   return const Center(child: CircularProgressIndicator());
                 } else if (state is VehicleLoaded) {
-                  // CHANGE: The UI now uses the properties from the updated VehicleLoaded state
                   return SingleChildScrollView(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Top Row (Location + Profile) - No changes here
+                        // Top Row (Location + Profile)
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -71,12 +82,24 @@ class HomeView extends StatelessWidget {
                         ),
                         const SizedBox(height: 16),
 
-                        // Search Bar - No changes here
+                        // Search Bar
                         TextField(
+                          controller: _searchController,
+                          onChanged: (query) {
+                            context.read<VehicleBloc>().add(SearchVehiclesEvent(query));
+                          },
                           decoration: InputDecoration(
                             hintText: "Search Vehicle",
                             prefixIcon: const Icon(Icons.search, size: 20),
-                            suffixIcon: const Icon(Icons.tune, size: 20),
+                            suffixIcon: _searchController.text.isNotEmpty
+                                ? IconButton(
+                                    icon: const Icon(Icons.clear, size: 20),
+                                    onPressed: () {
+                                      _searchController.clear();
+                                      context.read<VehicleBloc>().add(const SearchVehiclesEvent(''));
+                                    },
+                                  )
+                                : const Icon(Icons.tune, size: 20),
                             filled: true,
                             fillColor: Colors.grey.shade100,
                             contentPadding: const EdgeInsets.symmetric(vertical: 0),
@@ -91,7 +114,7 @@ class HomeView extends StatelessWidget {
                         const Text("Vehicle Type", style: TextStyle(color: Colors.grey, fontSize: 13, fontWeight: FontWeight.w500)),
                         const SizedBox(height: 6),
 
-                        // CHANGE: Filter chips are now built dynamically from the state
+                        // Filter chips
                         SingleChildScrollView(
                           scrollDirection: Axis.horizontal,
                           child: Row(
@@ -106,8 +129,19 @@ class HomeView extends StatelessWidget {
                         ),
                         const SizedBox(height: 14),
 
-                        // CHANGE: Vehicle cards are built from the filtered list
-                        ...state.filteredVehicles.map((vehicle) => _buildVehicleCard(context, vehicle)),
+                        // Conditionally show message or vehicle list
+                        if (state.filteredVehicles.isEmpty)
+                          const Center(
+                            child: Padding(
+                              padding: EdgeInsets.all(32.0),
+                              child: Text(
+                                "No vehicles found.",
+                                style: TextStyle(color: Colors.grey, fontSize: 16),
+                              ),
+                            ),
+                          )
+                        else
+                          ...state.filteredVehicles.map((vehicle) => _buildVehicleCard(context, vehicle)),
                       ],
                     ),
                   );
@@ -124,7 +158,6 @@ class HomeView extends StatelessWidget {
     );
   }
 
-  // CHANGE: Updated to be a ChoiceChip that dispatches an event on tap
   Widget _buildFilterChip(BuildContext context, String label, {bool selected = false}) {
     return Padding(
       padding: const EdgeInsets.only(right: 8.0),
@@ -133,7 +166,6 @@ class HomeView extends StatelessWidget {
         selected: selected,
         onSelected: (isSelected) {
           if (isSelected) {
-            // Dispatch the event to the BLoC to filter the list
             context.read<VehicleBloc>().add(FilterVehiclesEvent(label));
           }
         },
@@ -144,12 +176,11 @@ class HomeView extends StatelessWidget {
         backgroundColor: Colors.grey.shade200,
         selectedColor: Colors.blueAccent,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        showCheckmark: false, // Hides the default checkmark
+        showCheckmark: false,
       ),
     );
   }
 
-  // NOTE: No changes are needed for the _buildVehicleCard widget
   Widget _buildVehicleCard(BuildContext context, VehicleEntity vehicle) {
     return Container(
       padding: const EdgeInsets.all(11),
@@ -275,7 +306,6 @@ class HomeView extends StatelessWidget {
   }
 }
 
-// NOTE: No changes are needed for the IconText widget
 class IconText extends StatelessWidget {
   final IconData icon;
   final String text;

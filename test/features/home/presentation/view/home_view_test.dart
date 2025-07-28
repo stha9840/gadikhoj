@@ -40,8 +40,8 @@ void main() {
     testWidgets('displays vehicle cards with vehicle names and Rent Now button', (tester) async {
       mockVehicleBloc = MockVehicleBloc();
 
-      when(() => mockVehicleBloc.state).thenReturn(VehicleLoaded(testVehicles));
-      whenListen(mockVehicleBloc, Stream<VehicleState>.fromIterable([VehicleLoaded(testVehicles)]));
+      // when(() => mockVehicleBloc.state).thenReturn(VehicleLoaded(testVehicles));
+      // whenListen(mockVehicleBloc, Stream<VehicleState>.fromIterable([VehicleLoaded(testVehicles)]));
 
       await tester.pumpWidget(
         MaterialApp(

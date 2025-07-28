@@ -31,19 +31,20 @@ class VehicleDetailsView extends StatelessWidget {
 
       body: Column(
         children: [
-          // Top vehicle image
+          // Top vehicle image (NO HERO)
           SizedBox(
             height: size.height * 0.25,
             width: double.infinity,
-            child: Hero(
-              tag: 'vehicle_image_${vehicle.id}',
-              child: Image.network(
-                'http://192.168.101.3:5000/uploads/${vehicle.filepath}',
-                fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => const Center(
-                  child: Icon(Icons.broken_image, size: 100, color: Colors.grey),
-                ),
+            child: Image.network(
+              'http://192.168.101.3:5000/uploads/${vehicle.filepath}',
+              fit: BoxFit.cover,
+              errorBuilder: (_, __, ___) => const Center(
+                child: Icon(Icons.broken_image, size: 100, color: Colors.grey),
               ),
+              loadingBuilder: (context, child, loadingProgress) {
+                if (loadingProgress == null) return child;
+                return const Center(child: CircularProgressIndicator());
+              },
             ),
           ),
 
@@ -153,7 +154,7 @@ class VehicleDetailsView extends StatelessWidget {
     );
   }
 
-  // Updated specBox with gray icons
+  // Vehicle spec box
   Widget _specBox(IconData icon, String value, String label) {
     return Column(
       children: [

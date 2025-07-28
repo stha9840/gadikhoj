@@ -253,25 +253,22 @@ class _HomeViewState extends State<HomeView> {
             const SizedBox(height: 8),
 
             // 3. WRAP THE IMAGE WITH A HERO WIDGET FOR ANIMATION
-            Hero(
-              // The tag must be unique for each vehicle but consistent across both screens
-              tag: 'vehicle_image_${vehicle.id}',
-              child: Center(
-                child: Image.network(
-                  'http://192.168.101.3:5000/uploads/${vehicle.filepath}',
-                  height: 120,
-                  fit: BoxFit.contain,
-                  errorBuilder: (context, error, stackTrace) => const Icon(Icons.broken_image, size: 100),
-                  loadingBuilder: (context, child, loadingProgress) {
-                    if (loadingProgress == null) return child;
-                    return const SizedBox(
-                      height: 100,
-                      child: Center(child: CircularProgressIndicator()),
-                    );
-                  },
-                ),
-              ),
-            ),
+            Center(
+  child: Image.network(
+    'http://192.168.101.3:5000/uploads/${vehicle.filepath}',
+    height: 120,
+    fit: BoxFit.contain,
+    errorBuilder: (context, error, stackTrace) => const Icon(Icons.broken_image, size: 100),
+    loadingBuilder: (context, child, loadingProgress) {
+      if (loadingProgress == null) return child;
+      return const SizedBox(
+        height: 100,
+        child: Center(child: CircularProgressIndicator()),
+      );
+    },
+  ),
+),
+
             const SizedBox(height: 10),
 
             // Specs row (no changes here)

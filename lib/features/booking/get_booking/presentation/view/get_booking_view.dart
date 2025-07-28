@@ -14,17 +14,13 @@ class GetBookingView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create:
-          (context) =>
-              serviceLocator<BookingViewModel>()..add(
-                GetUserBookings(),
-              ), // Dispatch the initial event right after creation
+      create: (context) =>
+          serviceLocator<BookingViewModel>()..add(GetUserBookings()),
       child: const BookingListScreen(),
     );
   }
 }
 
-// Converted to a StatefulWidget to fetch bookings only once.
 class BookingListScreen extends StatefulWidget {
   const BookingListScreen({super.key});
 
@@ -36,7 +32,6 @@ class _BookingListScreenState extends State<BookingListScreen> {
   @override
   void initState() {
     super.initState();
-    // Dispatch the event to fetch bookings when the screen is initialized.
     context.read<BookingViewModel>().add(GetUserBookings());
   }
 
@@ -115,12 +110,10 @@ class _BookingListScreenState extends State<BookingListScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          // Pass the ViewModel to the details page
-                          builder:
-                              (_) => BlocProvider.value(
-                                value: context.read<BookingViewModel>(),
-                                child: BookingDetailsPage(booking: booking),
-                              ),
+                          builder: (_) => BlocProvider.value(
+                            value: context.read<BookingViewModel>(),
+                            child: BookingDetailsPage(booking: booking),
+                          ),
                         ),
                       );
                     },
@@ -138,7 +131,6 @@ class _BookingListScreenState extends State<BookingListScreen> {
   }
 
   Widget _buildBookingCard(BookingEntity booking) {
-    // ... (This widget remains unchanged)
     final dateFormatter = DateFormat('MMM dd, yyyy');
     final vehicleName = booking.vehicle?.vehicleName ?? 'Unknown Vehicle';
     final vehicleType = booking.vehicle?.vehicleType ?? 'Unknown Type';
@@ -292,19 +284,17 @@ class BookingDetailsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final dateFormatter = DateFormat('MMM dd, yyyy');
-    final vehicleName = booking.vehicle?.vehicleName ?? 'Unknown Vehicle';
-    final vehicleType = booking.vehicle?.vehicleType ?? 'Unknown Type';
-    final vehicleImage = booking.vehicle?.filepath ?? '';
+    final vehicle = booking.vehicle;
+    final vehicleName = vehicle?.vehicleName ?? 'Unknown Vehicle';
+    final vehicleType = vehicle?.vehicleType ?? 'Unknown Type';
 
     return BlocListener<BookingViewModel, BookingState>(
-      // Listen for state changes to show snackbars or navigate
       listener: (context, state) {
         if (state is BookingError) {
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
             ..showSnackBar(SnackBar(content: Text(state.message)));
         } else if (state is BookingLoaded) {
-          // When list reloads after an action, pop the details page
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
             ..showSnackBar(
@@ -328,7 +318,6 @@ class BookingDetailsPage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // ... (Image and details section remains unchanged)
               Container(
                 height: 250,
                 width: double.infinity,
@@ -339,22 +328,25 @@ class BookingDetailsPage extends StatelessWidget {
                     bottomRight: Radius.circular(20),
                   ),
                 ),
-                child:
-                    vehicleImage.isNotEmpty
-                        ? ClipRRect(
-                          borderRadius: const BorderRadius.only(
-                            bottomLeft: Radius.circular(20),
-                            bottomRight: Radius.circular(20),
-                          ),
-                          child: Image.network(
-                            vehicleImage,
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) {
-                              return _buildPlaceholderImage();
-                            },
-                          ),
-                        )
-                        : _buildPlaceholderImage(),
+                child: (vehicle != null && vehicle.filepath.isNotEmpty)
+                    ? ClipRRect(
+                        borderRadius: const BorderRadius.only(
+                          bottomLeft: Radius.circular(20),
+                          bottomRight: Radius.circular(20),
+                        ),
+                        child: Image.network(
+                          'http://192.168.101.3:5000/uploads/${vehicle.filepath}',
+                          fit: BoxFit.cover,
+                          loadingBuilder: (context, child, loadingProgress) {
+                            if (loadingProgress == null) return child;
+                            return const Center(child: CircularProgressIndicator());
+                          },
+                          errorBuilder: (context, error, stackTrace) {
+                            return _buildPlaceholderImage();
+                          },
+                        ),
+                      )
+                    : _buildPlaceholderImage(),
               ),
               const SizedBox(height: 20),
               Padding(
@@ -464,8 +456,8 @@ class BookingDetailsPage extends StatelessWidget {
               content: "Are you sure you want to cancel this booking?",
               onConfirm: () {
                 context.read<BookingViewModel>().add(
-                  CancelBooking(booking.id!),
-                );
+                      CancelBooking(booking.id!),
+                    );
               },
             );
             break;
@@ -476,97 +468,94 @@ class BookingDetailsPage extends StatelessWidget {
               content: "This action cannot be undone. Proceed?",
               onConfirm: () {
                 context.read<BookingViewModel>().add(
-                  DeleteBooking(booking.id!),
-                );
+                      DeleteBooking(booking.id!),
+                    );
               },
             );
             break;
           case 'edit':
             Navigator.of(context).push(
               MaterialPageRoute(
-                builder:
-                    (_) => BlocProvider.value(
-                      value: context.read<BookingViewModel>(),
-                      child: UpdateBookingView(booking: booking),
-                    ),
+                builder: (_) => BlocProvider.value(
+                  value: context.read<BookingViewModel>(),
+                  child: UpdateBookingView(booking: booking),
+                ),
               ),
             );
             break;
         }
       },
-      itemBuilder:
-          (BuildContext context) => [
-            PopupMenuItem<String>(
-              value: 'edit',
-              height: 44,
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.edit_outlined,
-                    color: Colors.grey.shade700,
-                    size: 18,
-                  ),
-                  const SizedBox(width: 12),
-                  Text(
-                    'Edit',
-                    style: TextStyle(
-                      color: Colors.grey.shade800,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                ],
+      itemBuilder: (BuildContext context) => [
+        PopupMenuItem<String>(
+          value: 'edit',
+          height: 44,
+          child: Row(
+            children: [
+              Icon(
+                Icons.edit_outlined,
+                color: Colors.grey.shade700,
+                size: 18,
               ),
-            ),
-            PopupMenuItem<String>(
-              value: 'cancel',
-              height: 44,
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.cancel_outlined,
-                    color: Colors.orange.shade600,
-                    size: 18,
-                  ),
-                  const SizedBox(width: 12),
-                  Text(
-                    'Cancel',
-                    style: TextStyle(
-                      color: Colors.grey.shade800,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                ],
+              const SizedBox(width: 12),
+              Text(
+                'Edit',
+                style: TextStyle(
+                  color: Colors.grey.shade800,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w400,
+                ),
               ),
-            ),
-            PopupMenuItem<String>(
-              value: 'delete',
-              height: 44,
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.delete_outline,
-                    color: Colors.red.shade500,
-                    size: 18,
-                  ),
-                  const SizedBox(width: 12),
-                  Text(
-                    'Delete',
-                    style: TextStyle(
-                      color: Colors.grey.shade800,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                ],
+            ],
+          ),
+        ),
+        PopupMenuItem<String>(
+          value: 'cancel',
+          height: 44,
+          child: Row(
+            children: [
+              Icon(
+                Icons.cancel_outlined,
+                color: Colors.orange.shade600,
+                size: 18,
               ),
-            ),
-          ],
+              const SizedBox(width: 12),
+              Text(
+                'Cancel',
+                style: TextStyle(
+                  color: Colors.grey.shade800,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            ],
+          ),
+        ),
+        PopupMenuItem<String>(
+          value: 'delete',
+          height: 44,
+          child: Row(
+            children: [
+              Icon(
+                Icons.delete_outline,
+                color: Colors.red.shade500,
+                size: 18,
+              ),
+              const SizedBox(width: 12),
+              Text(
+                'Delete',
+                style: TextStyle(
+                  color: Colors.grey.shade800,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 
-  // ✅ NEW: Reusable confirmation dialog
   void _showConfirmationDialog({
     required BuildContext context,
     required String title,
@@ -583,14 +572,14 @@ class BookingDetailsPage extends StatelessWidget {
             TextButton(
               child: const Text("No"),
               onPressed: () {
-                Navigator.of(dialogContext).pop(); // Dismiss the dialog
+                Navigator.of(dialogContext).pop();
               },
             ),
             TextButton(
               child: const Text("Yes"),
               onPressed: () {
-                Navigator.of(dialogContext).pop(); // Dismiss the dialog
-                onConfirm(); // Execute the action
+                Navigator.of(dialogContext).pop();
+                onConfirm();
               },
             ),
           ],
@@ -600,7 +589,6 @@ class BookingDetailsPage extends StatelessWidget {
   }
 
   Widget _buildPlaceholderImage() {
-    // ... (This widget remains unchanged)
     return Container(
       decoration: BoxDecoration(
         color: Colors.grey[200],
@@ -626,9 +614,7 @@ class BookingDetailsPage extends StatelessWidget {
   }
 }
 
-// These two helper widgets remain unchanged
 Widget _buildStatusChip(String? status) {
-  // ... (no changes needed)
   final statusText = status?.toLowerCase() ?? 'pending';
   Color backgroundColor;
   Color textColor;
@@ -686,7 +672,6 @@ Widget _buildDetailItem({
   required String label,
   required String value,
 }) {
-  // ... (no changes needed)
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [

@@ -1,7 +1,7 @@
 import 'package:finalyearproject/features/auth/presentation/view_model/profile_view_model/view/profile_view.dart';
 import 'package:finalyearproject/features/booking/get_booking/presentation/view/get_booking_view.dart';
 import 'package:finalyearproject/features/home/presentation/view/home_view.dart';
-import 'package:finalyearproject/features/notification/presentation/view/favourite_view.dart';
+import 'package:finalyearproject/features/favourite/presentation/view/favourite_view.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 

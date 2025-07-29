@@ -40,3 +40,6 @@ class UserFailure extends UserState {
   @override
   List<Object?> get props => [message];
 }
+class UserLoggedOut extends UserState {
+  const UserLoggedOut();
+}

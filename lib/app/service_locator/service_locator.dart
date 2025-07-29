@@ -4,16 +4,21 @@ import 'package:dio/dio.dart';
 import 'package:finalyearproject/app/shared_pref/token_shared_prefs.dart';
 import 'package:finalyearproject/core/network/api_service.dart';
 import 'package:finalyearproject/core/network/hive_service.dart';
+import 'package:finalyearproject/features/auth/data/data_source/local_datasource/user_local_datasource.dart';
 import 'package:finalyearproject/features/auth/data/data_source/remote_datasource/user_remote_datasource.dart';
 import 'package:finalyearproject/features/auth/data/repository/local_repository/user_local_repository.dart';
 import 'package:finalyearproject/features/auth/data/repository/remote_repository/user_remote_repository.dart';
-// IMPORTANT: Import the INTERFACE file
 import 'package:finalyearproject/features/auth/domain/repository/user_repository.dart';
+import 'package:finalyearproject/features/auth/domain/use_case/logout_user_usecase.dart';
+import 'package:finalyearproject/features/auth/domain/use_case/request_password_reset_usecase.dart';
+import 'package:finalyearproject/features/auth/domain/use_case/reset_password_usecase.dart';
 import 'package:finalyearproject/features/auth/domain/use_case/user_delete_usecase.dart';
 import 'package:finalyearproject/features/auth/domain/use_case/user_get_usecase.dart';
 import 'package:finalyearproject/features/auth/domain/use_case/user_login_usecase.dart';
 import 'package:finalyearproject/features/auth/domain/use_case/user_register_usecase.dart';
 import 'package:finalyearproject/features/auth/domain/use_case/user_update_usecase.dart';
+import 'package:finalyearproject/features/auth/presentation/view_model/forgot_password_view_model/forgot_password_view_model.dart';
+import 'package:finalyearproject/features/auth/presentation/view_model/login_view_model/login_view_model.dart';
 import 'package:finalyearproject/features/auth/presentation/view_model/profile_view_model/view_model/profile_view_model.dart';
 import 'package:finalyearproject/features/auth/presentation/view_model/register_view_model/register_view_model.dart';
 import 'package:finalyearproject/features/booking/get_booking/data/data_source/remote_data_source/get_booking_remote_datasource.dart';
@@ -38,15 +43,9 @@ import 'package:finalyearproject/features/saved_vechile/domain/usecase/add_saved
 import 'package:finalyearproject/features/saved_vechile/domain/usecase/get_saved_vechile_usecase.dart';
 import 'package:finalyearproject/features/saved_vechile/domain/usecase/remove_saved_vechile_usecase.dart';
 import 'package:finalyearproject/features/saved_vechile/presentation/view_model/saved_vechile_view_model.dart';
-import 'package:get_it/get_it.dart';
 import 'package:finalyearproject/features/splash/presentation/view_model/splash_view_model.dart';
-import 'package:finalyearproject/features/auth/presentation/view_model/login_view_model/login_view_model.dart';
-import 'package:finalyearproject/features/auth/data/data_source/local_datasource/user_local_datasource.dart';
+import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import 'package:finalyearproject/features/auth/domain/use_case/request_password_reset_usecase.dart';
-import 'package:finalyearproject/features/auth/domain/use_case/reset_password_usecase.dart';
-import 'package:finalyearproject/features/auth/presentation/view_model/forgot_password_view_model/forgot_password_view_model.dart';
 
 final serviceLocator = GetIt.instance;
 
@@ -101,15 +100,15 @@ Future<void> _initAuthModule() async {
     ),
   );
 
-  // =========================================================================
-  // 1. THE MAIN FIX: Register UserRemoteRepository AS its IUserRepository interface.
-  // =========================================================================
+  // FIX 1: Provide all dependencies to the repository implementation
   serviceLocator.registerFactory<IUserRepository>(
     () => UserRemoteRepository(
       userRemoteDatasource: serviceLocator<UserRemoteDatasource>(),
+      tokenSharedPrefs: serviceLocator<TokenSharedPrefs>(),
     ),
   );
 
+  // --- USE CASES ---
   serviceLocator.registerFactory(
     () => RegisterUserUseCase(
       userRepository: serviceLocator<IUserRepository>(),
@@ -144,9 +143,6 @@ Future<void> _initAuthModule() async {
     ),
   );
 
-  // =========================================================================
-  // 2. THIS NOW WORKS: Registering the new dependencies by asking for the INTERFACE.
-  // =========================================================================
   serviceLocator.registerFactory(
     () => RequestPasswordResetUsecase(
       repository: serviceLocator<IUserRepository>(),
@@ -159,13 +155,20 @@ Future<void> _initAuthModule() async {
     ),
   );
 
+  // FIX 2: Register the new LogoutUserUsecase
+  serviceLocator.registerFactory(
+    () => LogoutUserUsecase(
+      repository: serviceLocator<IUserRepository>(),
+    ),
+  );
+
+  // --- VIEW MODELS / BLOCS ---
   serviceLocator.registerFactory(
     () => ForgotPasswordViewModel(
       requestUsecase: serviceLocator<RequestPasswordResetUsecase>(),
       resetUsecase: serviceLocator<ResetPasswordUsecase>(),
     ),
   );
-  // --- End of new/corrected registrations ---
 
   serviceLocator.registerFactory(
     () => LoginViewModel(userLoginUsecase: serviceLocator()),
@@ -177,16 +180,17 @@ Future<void> _initAuthModule() async {
     ),
   );
 
+  // FIX 3: Provide all dependencies to the UserViewModel
   serviceLocator.registerFactory(
     () => UserViewModel(
       getUserUseCase: serviceLocator<GetUserUseCase>(),
       updateUserUseCase: serviceLocator<UpdateUserUseCase>(),
       deleteUserUseCase: serviceLocator<DeleteUserUseCase>(),
+      logoutUserUsecase: serviceLocator<LogoutUserUsecase>(),
     ),
   );
 }
 
-// ... [rest of the file remains the same] ...
 Future<void> _initSplashModule() async {
   serviceLocator.registerFactory(() => SplashViewModel());
 }

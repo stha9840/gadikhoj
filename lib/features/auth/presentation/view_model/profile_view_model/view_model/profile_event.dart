@@ -1,45 +1,48 @@
-// features/auth/presentation/view_model/user_view_model/user_event.dart
+// features/auth/presentation/view_model/profile_view_model/view_model/profile_event.dart
 
 import 'package:equatable/equatable.dart';
 import 'package:finalyearproject/features/auth/domain/entity/user_entity.dart';
-import 'package:flutter/material.dart';
 
 abstract class UserEvent extends Equatable {
   const UserEvent();
+
   @override
   List<Object?> get props => [];
 }
 
 // Event to fetch the current user's profile
 class GetUserEvent extends UserEvent {
-
   const GetUserEvent();
-
 }
 
 // Event to update the user's profile
 class UpdateUserEvent extends UserEvent {
-  final BuildContext context;
+  // CLEANED: No BuildContext here
   final String userId;
   final UserEntity user;
 
   const UpdateUserEvent({
-    required this.context,
     required this.userId,
     required this.user,
   });
 
   @override
-  List<Object?> get props => [context, userId, user];
+  List<Object?> get props => [userId, user];
 }
 
 // Event to delete the user's profile
 class DeleteUserEvent extends UserEvent {
-  final BuildContext context;
+  // CLEANED: No BuildContext here
   final String userId;
 
-  const DeleteUserEvent({required this.context, required this.userId});
+  const DeleteUserEvent({required this.userId});
 
   @override
-  List<Object?> get props => [context, userId];
+  List<Object?> get props => [userId];
+}
+
+// Event for logging out
+class LogoutEvent extends UserEvent {
+  // ADDED: const constructor for consistency and performance
+  const LogoutEvent();
 }

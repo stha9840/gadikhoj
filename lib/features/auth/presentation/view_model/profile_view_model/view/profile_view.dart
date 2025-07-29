@@ -1,4 +1,5 @@
 import 'package:finalyearproject/features/auth/domain/entity/user_entity.dart';
+import 'package:finalyearproject/features/auth/presentation/view/login_view.dart';
 import 'package:finalyearproject/features/auth/presentation/view_model/profile_view_model/view_model/profile_event.dart';
 import 'package:finalyearproject/features/auth/presentation/view_model/profile_view_model/view_model/profile_state.dart';
 import 'package:finalyearproject/features/auth/presentation/view_model/profile_view_model/view_model/profile_view_model.dart';
@@ -69,6 +70,14 @@ class _ProfileViewState extends State<ProfileView> {
             _usernameController.text = state.user.username ?? '';
             _emailController.text = state.user.email ?? '';
           }
+
+          // Logout navigation
+          if (state is UserLoggedOut) {
+            Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(builder: (_) => const LoginView()),
+              (route) => false,
+            );
+          }
         },
         builder: (context, state) {
           if (state is UserLoading) {
@@ -118,7 +127,7 @@ class _ProfileViewState extends State<ProfileView> {
                 padding: const EdgeInsets.all(20.0),
                 child: Column(
                   children: [
-                    // Profile Avatar Section
+                    // Avatar Section
                     Container(
                       margin: const EdgeInsets.only(bottom: 32),
                       child: Column(
@@ -127,9 +136,9 @@ class _ProfileViewState extends State<ProfileView> {
                             children: [
                               CircleAvatar(
                                 radius: 60,
-                                backgroundColor: Theme.of(
-                                  context,
-                                ).primaryColor.withOpacity(0.1),
+                                backgroundColor: Theme.of(context)
+                                    .primaryColor
+                                    .withOpacity(0.1),
                                 child: Icon(
                                   Icons.person,
                                   size: 60,
@@ -174,7 +183,7 @@ class _ProfileViewState extends State<ProfileView> {
                       ),
                     ),
 
-                    // Profile Form Card
+                    // Profile Form
                     Card(
                       elevation: 2,
                       shape: RoundedRectangleBorder(
@@ -196,7 +205,7 @@ class _ProfileViewState extends State<ProfileView> {
                               ),
                               const SizedBox(height: 24),
 
-                              // Username Field
+                              // Username
                               TextFormField(
                                 controller: _usernameController,
                                 enabled: _isEditing,
@@ -219,7 +228,7 @@ class _ProfileViewState extends State<ProfileView> {
                               ),
                               const SizedBox(height: 20),
 
-                              // Email Field
+                              // Email
                               TextFormField(
                                 controller: _emailController,
                                 enabled: _isEditing,
@@ -238,8 +247,8 @@ class _ProfileViewState extends State<ProfileView> {
                                     return 'Please enter your email';
                                   }
                                   if (!RegExp(
-                                    r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
-                                  ).hasMatch(value)) {
+                                          r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                                      .hasMatch(value)) {
                                     return 'Please enter a valid email address';
                                   }
                                   return null;
@@ -248,7 +257,6 @@ class _ProfileViewState extends State<ProfileView> {
 
                               if (_isEditing) ...[
                                 const SizedBox(height: 32),
-                                // Update Button
                                 SizedBox(
                                   width: double.infinity,
                                   child: ElevatedButton.icon(
@@ -261,23 +269,20 @@ class _ProfileViewState extends State<ProfileView> {
                                             username: _usernameController.text,
                                           );
                                           context.read<UserViewModel>().add(
-                                            UpdateUserEvent(
-                                              userId: userId,
-                                              user: updatedUser,
-                                              context: context,
-                                            ),
-                                          );
+                                                UpdateUserEvent(
+                                                  userId: userId,
+                                                  user: updatedUser,
+                                                ),
+                                              );
                                           setState(() {
                                             _isEditing = false;
                                           });
                                         } else {
-                                          ScaffoldMessenger.of(
-                                            context,
-                                          ).showSnackBar(
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(
                                             const SnackBar(
                                               content: Text(
-                                                'Error: User ID not found. Cannot update.',
-                                              ),
+                                                  'Error: User ID not found. Cannot update.'),
                                               backgroundColor: Colors.red,
                                             ),
                                           );
@@ -288,10 +293,10 @@ class _ProfileViewState extends State<ProfileView> {
                                     label: const Text('Save Changes'),
                                     style: ElevatedButton.styleFrom(
                                       padding: const EdgeInsets.symmetric(
-                                        vertical: 16,
-                                      ),
+                                          vertical: 16),
                                       shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(12),
+                                        borderRadius:
+                                            BorderRadius.circular(12),
                                       ),
                                     ),
                                   ),
@@ -305,7 +310,29 @@ class _ProfileViewState extends State<ProfileView> {
 
                     const SizedBox(height: 24),
 
-                    // Danger Zone Card
+                    // Logout Button (shows confirmation dialog)
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton.icon(
+                        onPressed: () {
+                          _showLogoutConfirmation(context);
+                        },
+                        icon: const Icon(Icons.logout),
+                        label: const Text('Logout'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.grey[800],
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 24),
+
+                    // Danger Zone
                     Card(
                       elevation: 2,
                       shape: RoundedRectangleBorder(
@@ -316,42 +343,38 @@ class _ProfileViewState extends State<ProfileView> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Row(
-                              children: [
-                                Icon(
-                                  Icons.warning_amber,
-                                  color: Colors.orange[700],
-                                ),
-                                const SizedBox(width: 8),
-                                const Text(
-                                  'Danger Zone',
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 16),
                             const Text(
-                              'Once you delete your account, there is no going back. Please be certain.',
-                              style: TextStyle(color: Colors.grey),
+                              'Danger Zone',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.red,
+                              ),
                             ),
                             const SizedBox(height: 16),
-                            OutlinedButton.icon(
-                              onPressed:
-                                  () => _showDeleteConfirmation(context, state),
-                              icon: const Icon(Icons.delete_outline),
-                              label: const Text('Delete Account'),
-                              style: OutlinedButton.styleFrom(
-                                foregroundColor: Colors.red,
-                                side: const BorderSide(color: Colors.red),
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 12,
-                                  horizontal: 16,
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
+                            Text(
+                              'Delete your account permanently. This action cannot be undone.',
+                              style: TextStyle(
+                                color: Colors.red[700],
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            SizedBox(
+                              width: double.infinity,
+                              child: ElevatedButton.icon(
+                                onPressed: () {
+                                  _showDeleteAccountConfirmation(context, state.user.userId);
+                                },
+                                icon: const Icon(Icons.delete_forever),
+                                label: const Text('Delete Account'),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.red[700],
+                                  foregroundColor: Colors.white,
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 16),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
                                 ),
                               ),
                             ),
@@ -366,25 +389,13 @@ class _ProfileViewState extends State<ProfileView> {
           }
 
           // Default fallback UI
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.person_outline, size: 64, color: Colors.grey[400]),
-                const SizedBox(height: 16),
-                Text(
-                  'Welcome to your profile!',
-                  style: TextStyle(fontSize: 18, color: Colors.grey[600]),
-                ),
-              ],
-            ),
-          );
+          return const Center(child: Text('No profile data.'));
         },
       ),
     );
   }
 
-  void _showDeleteConfirmation(BuildContext context, UserLoaded state) {
+  void _showLogoutConfirmation(BuildContext context) {
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
@@ -394,25 +405,14 @@ class _ProfileViewState extends State<ProfileView> {
           ),
           title: Row(
             children: [
-              Icon(Icons.warning, color: Colors.red[600]),
+              Icon(Icons.logout, color: Colors.grey[800]),
               const SizedBox(width: 8),
-              const Text('Delete Account'),
+              const Text('Logout'),
             ],
           ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'Are you sure you want to delete your account?',
-                style: TextStyle(fontWeight: FontWeight.w500),
-              ),
-              const SizedBox(height: 8),
-              const Text(
-                'This action cannot be undone. All your data will be permanently removed.',
-                style: TextStyle(color: Colors.grey),
-              ),
-            ],
+          content: const Text(
+            'Are you sure you want to logout?',
+            style: TextStyle(fontWeight: FontWeight.w500),
           ),
           actions: [
             TextButton(
@@ -422,22 +422,52 @@ class _ProfileViewState extends State<ProfileView> {
             ElevatedButton(
               onPressed: () {
                 Navigator.of(dialogContext).pop();
-                final userId = state.user.userId;
-                if (userId != null) {
-                  context.read<UserViewModel>().add(
-                    DeleteUserEvent(userId: userId, context: context),
-                  );
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Error: User ID not found. Cannot delete.'),
-                      backgroundColor: Colors.red,
-                    ),
-                  );
-                }
+                context.read<UserViewModel>().add(const LogoutEvent());
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red,
+                backgroundColor: Colors.grey[800],
+                foregroundColor: Colors.white,
+              ),
+              child: const Text('Logout'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showDeleteAccountConfirmation(BuildContext context, String? userId) {
+    if (userId == null) return;
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          title: Row(
+            children: [
+              Icon(Icons.delete_forever, color: Colors.red[700]),
+              const SizedBox(width: 8),
+              const Text('Delete Account'),
+            ],
+          ),
+          content: const Text(
+            'This action is irreversible. Are you sure you want to delete your account?',
+            style: TextStyle(fontWeight: FontWeight.w500),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+                context.read<UserViewModel>().add(DeleteUserEvent(userId: userId));
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red[700],
                 foregroundColor: Colors.white,
               ),
               child: const Text('Delete'),

@@ -49,4 +49,16 @@ class UserLocalDatasource implements IUserDataSource {
     // TODO: implement updateUser
     throw UnimplementedError();
   }
+  
+  @override
+  Future<void> requestPasswordReset(String email) {
+    // TODO: implement requestPasswordReset
+    throw UnimplementedError();
+  }
+  
+  @override
+  Future<void> resetPassword(String token, String password) {
+    // TODO: implement resetPassword
+    throw UnimplementedError();
+  }
 }

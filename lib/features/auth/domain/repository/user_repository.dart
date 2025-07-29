@@ -8,4 +8,6 @@ abstract interface class IUserRepository {
   Future<Either<Failure, UserEntity>> getUser(String? token);
   Future<Either<Failure, void>> updateUser(String userId, UserEntity user, String? token);
   Future<Either<Failure, void>> deleteUser(String userId, String? token);
+  Future<Either<Failure, void>> requestPasswordReset(String email);
+  Future<Either<Failure, void>> resetPassword(String token, String password);
 }

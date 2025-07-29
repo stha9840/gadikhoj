@@ -110,4 +110,30 @@ class UserRemoteDatasource implements IUserDataSource {
       throw Exception('Failed to delete user: $errorMessage');
     }
   }
+   @override
+  Future<void> requestPasswordReset(String email) async {
+    try {
+      await _apiService.dio.post(
+        ApiEndpoints.requestReset,
+        data: {'email': email},
+      );
+      // We don't need to return anything on success
+    } on DioException catch (e) {
+      final errorMessage = e.response?.data['message'] ?? "Failed to send reset link.";
+      throw Exception(errorMessage);
+    }
+  }
+
+  @override
+  Future<void> resetPassword(String token, String password) async {
+    try {
+      await _apiService.dio.post(
+        '${ApiEndpoints.resetPassword}$token', // Append token to URL
+        data: {'password': password},
+      );
+    } on DioException catch (e) {
+      final errorMessage = e.response?.data['message'] ?? "Invalid or expired token.";
+      throw Exception(errorMessage);
+    }
+  }
 }

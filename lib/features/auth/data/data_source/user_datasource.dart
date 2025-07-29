@@ -6,4 +6,6 @@ abstract interface class IUserDataSource {
   Future<void> updateUser(String userId, UserEntity user, String? token);
   Future<void> deleteUser(String userId, String? token);
   Future<void> getUser( String? token);
+  Future<void> requestPasswordReset(String email);
+  Future<void> resetPassword(String token, String password);
 }

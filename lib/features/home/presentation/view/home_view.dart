@@ -255,7 +255,7 @@ class _HomeViewState extends State<HomeView> {
             // 3. WRAP THE IMAGE WITH A HERO WIDGET FOR ANIMATION
             Center(
   child: Image.network(
-    'http://192.168.101.3:5000/uploads/${vehicle.filepath}',
+    'http://192.168.101.4:5000/uploads/${vehicle.filepath}',
     height: 120,
     fit: BoxFit.contain,
     errorBuilder: (context, error, stackTrace) => const Icon(Icons.broken_image, size: 100),

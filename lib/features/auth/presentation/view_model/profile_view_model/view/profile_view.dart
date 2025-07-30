@@ -1,3 +1,6 @@
+// In: features/auth/presentation/view/profile_view.dart
+
+import 'package:finalyearproject/core/utils/shake_detector.dart';
 import 'package:finalyearproject/features/auth/domain/entity/user_entity.dart';
 import 'package:finalyearproject/features/auth/presentation/view/login_view.dart';
 import 'package:finalyearproject/features/auth/presentation/view_model/profile_view_model/view_model/profile_event.dart';
@@ -5,6 +8,7 @@ import 'package:finalyearproject/features/auth/presentation/view_model/profile_v
 import 'package:finalyearproject/features/auth/presentation/view_model/profile_view_model/view_model/profile_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 
 class ProfileView extends StatefulWidget {
   const ProfileView({super.key});
@@ -18,20 +22,46 @@ class _ProfileViewState extends State<ProfileView> {
   final _usernameController = TextEditingController();
   final _emailController = TextEditingController();
   bool _isEditing = false;
+  
+  late final ShakeDetector _shakeDetector;
+  
+  // 1. Add a flag to prevent multiple dialogs
+  bool _isLogoutDialogShowing = false;
 
   @override
   void initState() {
     super.initState();
     context.read<UserViewModel>().add(GetUserEvent());
+
+    _shakeDetector = ShakeDetector(
+      onPhoneShake: () {
+        // 2. Check if a dialog is already showing or if the UI is loading.
+        // If so, do nothing.
+        if (_isLogoutDialogShowing || context.read<UserViewModel>().state is UserLoading) {
+          return; 
+        }
+        
+        // Set the flag to true and show the dialog
+        setState(() {
+          _isLogoutDialogShowing = true;
+        });
+        _showLogoutConfirmation(context);
+      },
+      // Optional: You can increase the threshold if the double-shake is still too sensitive
+      // shakeThreshold: 15.0, 
+    );
+    _shakeDetector.startListening();
   }
 
   @override
   void dispose() {
+    _shakeDetector.stopListening();
     _emailController.dispose();
     _usernameController.dispose();
     super.dispose();
   }
 
+  // ... (Your build method remains exactly the same) ...
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -395,8 +425,9 @@ class _ProfileViewState extends State<ProfileView> {
     );
   }
 
-  void _showLogoutConfirmation(BuildContext context) {
-    showDialog(
+  // 3. Make the function async and reset the flag after the dialog is closed.
+  void _showLogoutConfirmation(BuildContext context) async {
+    await showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
         return AlertDialog(
@@ -421,7 +452,7 @@ class _ProfileViewState extends State<ProfileView> {
             ),
             ElevatedButton(
               onPressed: () {
-                Navigator.of(dialogContext).pop();
+                Navigator.of(dialogContext).pop(); // Close this dialog first
                 context.read<UserViewModel>().add(const LogoutEvent());
               },
               style: ElevatedButton.styleFrom(
@@ -434,8 +465,15 @@ class _ProfileViewState extends State<ProfileView> {
         );
       },
     );
-  }
 
+    // This code runs *after* the dialog has been popped (closed).
+    // Now we can allow a new dialog to be shown.
+    setState(() {
+      _isLogoutDialogShowing = false;
+    });
+  }
+  
+  // ... (Your _showDeleteAccountConfirmation method remains the same) ...
   void _showDeleteAccountConfirmation(BuildContext context, String? userId) {
     if (userId == null) return;
     showDialog(

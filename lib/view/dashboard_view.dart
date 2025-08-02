@@ -25,11 +25,10 @@ class _DashboardViewState extends State<DashboardView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Dashboard'),
-        automaticallyImplyLeading: false,
+      body: Padding(
+        padding: const EdgeInsets.only(top: 20),
+        child: lstBottomScreen[_selectedIndex],
       ),
-      body: lstBottomScreen[_selectedIndex], // ✅ Only this one should remain
       bottomNavigationBar: Theme(
         data: Theme.of(context).copyWith(
           splashColor: Colors.transparent,
@@ -37,7 +36,7 @@ class _DashboardViewState extends State<DashboardView> {
           hoverColor: Colors.transparent,
         ),
         child: BottomNavigationBar(
-          showSelectedLabels: false,
+          // showSelectedLabels: false,
           showUnselectedLabels: false,
 
           type: BottomNavigationBarType.fixed,

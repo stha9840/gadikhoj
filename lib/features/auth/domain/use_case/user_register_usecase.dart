@@ -22,22 +22,28 @@ class RegisterUserParams extends Equatable {
   List<Object?> get props => [name, email, password];
 }
 
-class RegisterUserUseCase
-    implements UseCaseWithParams<void, RegisterUserParams> {
+class RegisterUserUseCase implements UseCaseWithParams<void, RegisterUserParams> {
   final IUserRepository _userRepository;
 
   RegisterUserUseCase({required IUserRepository userRepository})
-    : _userRepository = userRepository;
+      : _userRepository = userRepository;
 
   @override
-  Future<Either<Failure, void>> call(RegisterUserParams params) {
+  Future<Either<Failure, void>> call(RegisterUserParams params) async {
     final user = UserEntity(
-      name: params.name,
+      username: params.name,
       email: params.email,
       password: params.password,
     );
     debugPrint("RegisterUserUseCase called with: $user");
 
-    return _userRepository.registerUser(user);
+    try {
+      await _userRepository.registerUser(user);
+      return Right(null);
+    } catch (e) {
+      final cleanedMessage = e.toString().replaceAll('Exception: ', '');
+      return Left(ApiFailure(message: 'Failed to register user: $cleanedMessage'));
+    }
   }
 }
+

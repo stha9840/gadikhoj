@@ -1,5 +1,5 @@
 import 'package:finalyearproject/features/auth/domain/use_case/user_login_usecase.dart';
-import 'package:finalyearproject/view/dashboard_view.dart';
+import 'package:finalyearproject/features/navigation/presentation/view/dashboard_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:finalyearproject/features/auth/presentation/view_model/login_view_model/login_event.dart';

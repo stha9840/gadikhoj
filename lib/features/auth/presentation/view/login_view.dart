@@ -1,4 +1,4 @@
-import 'package:finalyearproject/app/app.dart';
+
 import 'package:finalyearproject/app/service_locator/service_locator.dart';
 import 'package:finalyearproject/features/auth/presentation/view/register_view.dart';
 import 'package:finalyearproject/features/auth/presentation/view_model/login_view_model/login_event.dart';

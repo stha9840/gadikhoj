@@ -11,7 +11,7 @@ class SignUpView extends StatelessWidget {
   SignUpView({super.key});
 
   final _formKey = GlobalKey<FormState>();
-  final _nameController = TextEditingController();
+  final _usernameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
@@ -69,7 +69,7 @@ class SignUpView extends StatelessWidget {
                               ),
                               const SizedBox(height: 16),
                               TextFormField(
-                                controller: _nameController,
+                                controller: _usernameController,
                                 decoration: _inputDecoration(
                                   'Name',
                                   Icons.person,
@@ -171,8 +171,8 @@ class SignUpView extends StatelessWidget {
                                                   .read<RegisterViewModel>()
                                                   .add(
                                                     RegisterUserEvent(
-                                                      name:
-                                                          _nameController.text
+                                                      username:
+                                                          _usernameController.text
                                                               .trim(),
                                                       email:
                                                           _emailController.text

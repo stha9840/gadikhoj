@@ -62,22 +62,47 @@ Future<void> _selectDate(BuildContext context, bool isStart) async {
     initialDateForPicker = _endDate!.isBefore(firstDateForPicker) ? firstDateForPicker : _endDate!;
   }
 
-  final DateTime? picked = await showDatePicker(
-    context: context,
-    initialDate: initialDateForPicker, // Use our calculated valid initial date
-    firstDate: firstDateForPicker,   // Use our calculated valid first date
-    lastDate: DateTime(2100),
-    builder: (context, child) {
-      return Theme(
-        data: Theme.of(context).copyWith(
-          colorScheme: Theme.of(
-            context,
-          ).colorScheme.copyWith(primary: Colors.blue.shade600),
+  // In your _selectDate method:
+final DateTime? picked = await showDatePicker(
+  context: context,
+  initialDate: initialDateForPicker,
+  firstDate: firstDateForPicker,
+  lastDate: DateTime(2100),
+  builder: (context, child) {
+    return Theme(
+      data: Theme.of(context).copyWith(
+        // 1. Primary color for header background and selected day
+        colorScheme: Theme.of(context).colorScheme.copyWith(
+              primary: Colors.blue.shade600, // Header background
+              onPrimary: Colors.white, // Header text color
+              onSurface: Colors.black87, // Calendar day text color
+            ),
+
+        // 2. Text Theme for styling the text
+        textTheme: Theme.of(context).textTheme.copyWith(
+              bodyLarge: TextStyle(color: Colors.grey.shade800), // Calendar days
+              headlineMedium: const TextStyle( // Header date text
+                fontWeight: FontWeight.bold,
+                fontSize: 24,
+                color: Colors.white,
+              ),
+            ),
+
+        // 3. Style for the OK and Cancel buttons
+        textButtonTheme: TextButtonThemeData(
+          style: TextButton.styleFrom(
+            foregroundColor: Colors.blue.shade700, // Button text color
+            textStyle: const TextStyle(
+              fontWeight: FontWeight.w600,
+              fontSize: 16,
+            ),
+          ),
         ),
-        child: child!,
-      );
-    },
-  );
+      ),
+      child: child!,
+    );
+  },
+);
 
   if (picked != null) {
     setState(() {

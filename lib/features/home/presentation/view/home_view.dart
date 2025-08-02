@@ -1,3 +1,4 @@
+import 'package:finalyearproject/features/auth/presentation/view_model/profile_view_model/view/profile_view.dart';
 import 'package:finalyearproject/features/home/domain/entity/vehicle.dart';
 import 'package:finalyearproject/features/home/domain/use_case/create_booking_usecase.dart';
 import 'package:finalyearproject/features/home/presentation/view/booking_view.dart';
@@ -38,11 +39,22 @@ class _HomeViewState extends State<HomeView> {
           if (state is SavedVehicleActionSuccess) {
             ScaffoldMessenger.of(context)
               ..hideCurrentSnackBar()
-              ..showSnackBar(SnackBar(content: Text(state.message), duration: const Duration(seconds: 2)));
+              ..showSnackBar(
+                SnackBar(
+                  content: Text(state.message),
+                  duration: const Duration(seconds: 2),
+                ),
+              );
           } else if (state is SavedVehicleError) {
             ScaffoldMessenger.of(context)
               ..hideCurrentSnackBar()
-              ..showSnackBar(SnackBar(backgroundColor: Colors.black, content: Text(state.message), duration: const Duration(seconds: 2)));
+              ..showSnackBar(
+                SnackBar(
+                  backgroundColor: Colors.black,
+                  content: Text(state.message),
+                  duration: const Duration(seconds: 2),
+                ),
+              );
           }
         },
         child: SafeArea(
@@ -63,21 +75,51 @@ class _HomeViewState extends State<HomeView> {
                           children: [
                             Row(
                               children: const [
-                                Icon(Icons.location_on, color: Colors.grey, size: 26),
+                                Icon(
+                                  Icons.location_on,
+                                  color: Colors.grey,
+                                  size: 26,
+                                ),
                                 SizedBox(width: 5),
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text("Your location", style: TextStyle(fontSize: 14, color: Colors.grey)),
-                                    Text("Gangabu, Kathmandu", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
+                                    Text(
+                                      "Your location",
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                    Text(
+                                      "Gangabu, Kathmandu",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 13,
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ],
                             ),
-                            const CircleAvatar(
-                              radius: 21,
-                              backgroundColor: Colors.orangeAccent,
-                              child: Icon(Icons.person, size: 24, color: Colors.black),
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const ProfileView(),
+                                  ),
+                                );
+                              },
+                              child: const CircleAvatar(
+                                radius: 21,
+                                backgroundColor: Color.fromARGB(69, 158, 158, 158),
+                                child: Icon(
+                                  Icons.person,
+                                  size: 24,
+                                  color: Color.fromARGB(255, 0, 0, 0),
+                                ),
+                              ),
                             ),
                           ],
                         ),
@@ -87,23 +129,30 @@ class _HomeViewState extends State<HomeView> {
                         TextField(
                           controller: _searchController,
                           onChanged: (query) {
-                            context.read<VehicleBloc>().add(SearchVehiclesEvent(query));
+                            context.read<VehicleBloc>().add(
+                              SearchVehiclesEvent(query),
+                            );
                           },
                           decoration: InputDecoration(
                             hintText: "Search Vehicle",
                             prefixIcon: const Icon(Icons.search, size: 20),
-                            suffixIcon: _searchController.text.isNotEmpty
-                                ? IconButton(
-                                    icon: const Icon(Icons.clear, size: 20),
-                                    onPressed: () {
-                                      _searchController.clear();
-                                      context.read<VehicleBloc>().add(const SearchVehiclesEvent(''));
-                                    },
-                                  )
-                                : const Icon(Icons.tune, size: 20),
+                            suffixIcon:
+                                _searchController.text.isNotEmpty
+                                    ? IconButton(
+                                      icon: const Icon(Icons.clear, size: 20),
+                                      onPressed: () {
+                                        _searchController.clear();
+                                        context.read<VehicleBloc>().add(
+                                          const SearchVehiclesEvent(''),
+                                        );
+                                      },
+                                    )
+                                    : const Icon(Icons.tune, size: 20),
                             filled: true,
                             fillColor: Colors.grey.shade100,
-                            contentPadding: const EdgeInsets.symmetric(vertical: 0),
+                            contentPadding: const EdgeInsets.symmetric(
+                              vertical: 0,
+                            ),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(16),
                               borderSide: BorderSide.none,
@@ -112,20 +161,28 @@ class _HomeViewState extends State<HomeView> {
                         ),
                         const SizedBox(height: 14),
 
-                        const Text("Vehicle Type", style: TextStyle(color: Colors.grey, fontSize: 13, fontWeight: FontWeight.w500)),
+                        const Text(
+                          "Vehicle Type",
+                          style: TextStyle(
+                            color: Colors.grey,
+                            fontSize: 13,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
                         const SizedBox(height: 6),
 
                         // Filter chips
                         SingleChildScrollView(
                           scrollDirection: Axis.horizontal,
                           child: Row(
-                            children: state.vehicleTypes.map((type) {
-                              return _buildFilterChip(
-                                context,
-                                type,
-                                selected: type == state.selectedType,
-                              );
-                            }).toList(),
+                            children:
+                                state.vehicleTypes.map((type) {
+                                  return _buildFilterChip(
+                                    context,
+                                    type,
+                                    selected: type == state.selectedType,
+                                  );
+                                }).toList(),
                           ),
                         ),
                         const SizedBox(height: 14),
@@ -137,12 +194,17 @@ class _HomeViewState extends State<HomeView> {
                               padding: EdgeInsets.all(32.0),
                               child: Text(
                                 "No vehicles found.",
-                                style: TextStyle(color: Colors.grey, fontSize: 16),
+                                style: TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 16,
+                                ),
                               ),
                             ),
                           )
                         else
-                          ...state.filteredVehicles.map((vehicle) => _buildVehicleCard(context, vehicle)),
+                          ...state.filteredVehicles.map(
+                            (vehicle) => _buildVehicleCard(context, vehicle),
+                          ),
                       ],
                     ),
                   );
@@ -159,7 +221,11 @@ class _HomeViewState extends State<HomeView> {
     );
   }
 
-  Widget _buildFilterChip(BuildContext context, String label, {bool selected = false}) {
+  Widget _buildFilterChip(
+    BuildContext context,
+    String label, {
+    bool selected = false,
+  }) {
     return Padding(
       padding: const EdgeInsets.only(right: 8.0),
       child: ChoiceChip(
@@ -195,7 +261,9 @@ class _HomeViewState extends State<HomeView> {
           ),
         );
       },
-      borderRadius: BorderRadius.circular(19), // Match the card's border for a nice ripple effect
+      borderRadius: BorderRadius.circular(
+        19,
+      ), // Match the card's border for a nice ripple effect
       child: Container(
         padding: const EdgeInsets.all(11),
         margin: const EdgeInsets.only(bottom: 12),
@@ -221,15 +289,29 @@ class _HomeViewState extends State<HomeView> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(vehicle.vehicleName, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
-                    Text(vehicle.vehicleType, style: const TextStyle(color: Colors.grey, fontSize: 11.5)),
+                    Text(
+                      vehicle.vehicleName,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                      ),
+                    ),
+                    Text(
+                      vehicle.vehicleType,
+                      style: const TextStyle(
+                        color: Colors.grey,
+                        fontSize: 11.5,
+                      ),
+                    ),
                   ],
                 ),
                 BlocBuilder<SavedVehicleBloc, SavedVehicleState>(
                   builder: (context, savedState) {
                     bool isSaved = false;
                     if (savedState is SavedVehicleSuccess) {
-                      isSaved = savedState.savedVehicles.any((saved) => saved.vehicle.id == vehicle.id);
+                      isSaved = savedState.savedVehicles.any(
+                        (saved) => saved.vehicle.id == vehicle.id,
+                      );
                     }
                     return IconButton(
                       icon: Icon(
@@ -240,9 +322,13 @@ class _HomeViewState extends State<HomeView> {
                       onPressed: () {
                         if (vehicle.id == null) return;
                         if (isSaved) {
-                          context.read<SavedVehicleBloc>().add(RemoveVehicleFromSaved(vehicleId: vehicle.id!));
+                          context.read<SavedVehicleBloc>().add(
+                            RemoveVehicleFromSaved(vehicleId: vehicle.id!),
+                          );
                         } else {
-                          context.read<SavedVehicleBloc>().add(AddVehicleToSaved(vehicleId: vehicle.id!));
+                          context.read<SavedVehicleBloc>().add(
+                            AddVehicleToSaved(vehicleId: vehicle.id!),
+                          );
                         }
                       },
                     );
@@ -254,20 +340,22 @@ class _HomeViewState extends State<HomeView> {
 
             // 3. WRAP THE IMAGE WITH A HERO WIDGET FOR ANIMATION
             Center(
-  child: Image.network(
-    'http://192.168.101.3:5000/uploads/${vehicle.filepath}',
-    height: 120,
-    fit: BoxFit.contain,
-    errorBuilder: (context, error, stackTrace) => const Icon(Icons.broken_image, size: 100),
-    loadingBuilder: (context, child, loadingProgress) {
-      if (loadingProgress == null) return child;
-      return const SizedBox(
-        height: 100,
-        child: Center(child: CircularProgressIndicator()),
-      );
-    },
-  ),
-),
+              child: Image.network(
+                'http://192.168.101.3:5000/uploads/${vehicle.filepath}',
+                height: 120,
+                fit: BoxFit.contain,
+                errorBuilder:
+                    (context, error, stackTrace) =>
+                        const Icon(Icons.broken_image, size: 100),
+                loadingBuilder: (context, child, loadingProgress) {
+                  if (loadingProgress == null) return child;
+                  return const SizedBox(
+                    height: 100,
+                    child: Center(child: CircularProgressIndicator()),
+                  );
+                },
+              ),
+            ),
 
             const SizedBox(height: 10),
 
@@ -275,9 +363,24 @@ class _HomeViewState extends State<HomeView> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Expanded(child: IconText(icon: FontAwesomeIcons.gasPump, text: "${vehicle.fuelCapacityLitres} litres")),
-                Expanded(child: IconText(icon: FontAwesomeIcons.weightHanging, text: "${vehicle.loadCapacityKg} kg")),
-                Expanded(child: IconText(icon: FontAwesomeIcons.userGroup, text: vehicle.passengerCapacity)),
+                Expanded(
+                  child: IconText(
+                    icon: FontAwesomeIcons.gasPump,
+                    text: "${vehicle.fuelCapacityLitres} litres",
+                  ),
+                ),
+                Expanded(
+                  child: IconText(
+                    icon: FontAwesomeIcons.weightHanging,
+                    text: "${vehicle.loadCapacityKg} kg",
+                  ),
+                ),
+                Expanded(
+                  child: IconText(
+                    icon: FontAwesomeIcons.userGroup,
+                    text: vehicle.passengerCapacity,
+                  ),
+                ),
               ],
             ),
             const SizedBox(height: 10),
@@ -290,10 +393,18 @@ class _HomeViewState extends State<HomeView> {
                   text: TextSpan(
                     children: [
                       TextSpan(
-                        text: "Npr ${vehicle.pricePerTrip.toStringAsFixed(0)} /- ",
-                        style: const TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.w600),
+                        text:
+                            "Npr ${vehicle.pricePerTrip.toStringAsFixed(0)} /- ",
+                        style: const TextStyle(
+                          color: Colors.black,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
-                      const TextSpan(text: "Per trip", style: TextStyle(color: Colors.grey, fontSize: 15)),
+                      const TextSpan(
+                        text: "Per trip",
+                        style: TextStyle(color: Colors.grey, fontSize: 15),
+                      ),
                     ],
                   ),
                 ),
@@ -302,12 +413,15 @@ class _HomeViewState extends State<HomeView> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => BlocProvider(
-                          create: (context) => BookingBloc(
-                            createBookingUsecase: context.read<CreateBookingUsecase>(),
-                          ),
-                          child: BookingScreen(vehicle: vehicle),
-                        ),
+                        builder:
+                            (_) => BlocProvider(
+                              create:
+                                  (context) => BookingBloc(
+                                    createBookingUsecase:
+                                        context.read<CreateBookingUsecase>(),
+                                  ),
+                              child: BookingScreen(vehicle: vehicle),
+                            ),
                       ),
                     );
                   },

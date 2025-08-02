@@ -415,6 +415,7 @@ class BookingDetailsPage extends StatelessWidget {
                       label: "Drop Location",
                       value: booking.dropLocation,
                     ),
+                    
                     const SizedBox(height: 20),
                     Text(
                       "Total Price: Rs. ${booking.totalPrice.toStringAsFixed(2)}",

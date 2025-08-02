@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: SplashView(), // This widget can now access LoginViewModel
+      home: const SplashView(), // This widget can now access LoginViewModel
     );
   }
 }

@@ -1,9 +1,8 @@
-// lib/features/splash/presentation/view/splash_view.dart
-
+import 'package:finalyearproject/features/auth/presentation/view/login_view.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
+ // Import LoginView
 import '../view_model/splash_view_model.dart';
 
 class SplashView extends StatelessWidget {
@@ -11,9 +10,17 @@ class SplashView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Trigger the logic after build
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<SplashViewModel>().init(context);
+      // Trigger the SplashViewModel logic if needed
+      // context.read<SplashViewModel>().init(context);
+
+      // Navigate to LoginView after 3 seconds
+      Future.delayed(const Duration(seconds: 3), () {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const LoginView()),
+        );
+      });
     });
 
     return Scaffold(

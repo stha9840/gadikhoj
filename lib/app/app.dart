@@ -1,5 +1,6 @@
 
-import 'package:finalyearproject/features/auth/presentation/view/login_view.dart';
+
+import 'package:finalyearproject/features/splash/presentation/view/splash_view.dart';
 import 'package:flutter/material.dart';
 
 // class MyApp extends StatelessWidget {
@@ -30,7 +31,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: LoginView(), // This widget can now access LoginViewModel
+      home: SplashView(), // This widget can now access LoginViewModel
     );
   }
 }

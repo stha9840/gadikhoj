@@ -40,33 +40,59 @@ class _UpdateBookingViewState extends State<UpdateBookingView> {
     super.dispose();
   }
 
-  Future<void> _selectDate(BuildContext context, bool isStart) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: isStart ? _startDate! : _endDate!,
-      firstDate: DateTime.now(),
-      lastDate: DateTime(2100),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: Theme.of(
-              context,
-            ).colorScheme.copyWith(primary: Colors.blue.shade600),
-          ),
-          child: child!,
-        );
-      },
-    );
-    if (picked != null) {
-      setState(() {
-        if (isStart) {
-          _startDate = picked;
-        } else {
-          _endDate = picked;
-        }
-      });
-    }
+Future<void> _selectDate(BuildContext context, bool isStart) async {
+  // Get the current date, but without the time component.
+  final now = DateTime.now();
+  final today = DateTime(now.year, now.month, now.day);
+
+  // Determine the valid first date for the picker.
+  // For the start date, it's today. For the end date, it's the start date.
+  final firstDateForPicker = isStart ? today : _startDate!;
+
+  // Determine the valid initial date for the picker.
+  // It should not be before the first selectable date.
+  DateTime initialDateForPicker;
+  if (isStart) {
+    // If the current start date is before today, open the picker on today.
+    // Otherwise, open it on the current start date.
+    initialDateForPicker = _startDate!.isBefore(firstDateForPicker) ? firstDateForPicker : _startDate!;
+  } else {
+    // If the current end date is before the start date, open the picker on the start date.
+    // Otherwise, open it on the current end date.
+    initialDateForPicker = _endDate!.isBefore(firstDateForPicker) ? firstDateForPicker : _endDate!;
   }
+
+  final DateTime? picked = await showDatePicker(
+    context: context,
+    initialDate: initialDateForPicker, // Use our calculated valid initial date
+    firstDate: firstDateForPicker,   // Use our calculated valid first date
+    lastDate: DateTime(2100),
+    builder: (context, child) {
+      return Theme(
+        data: Theme.of(context).copyWith(
+          colorScheme: Theme.of(
+            context,
+          ).colorScheme.copyWith(primary: Colors.blue.shade600),
+        ),
+        child: child!,
+      );
+    },
+  );
+
+  if (picked != null) {
+    setState(() {
+      if (isStart) {
+        _startDate = picked;
+        // Also, if the end date is now before the new start date, update the end date too.
+        if (_endDate!.isBefore(_startDate!)) {
+          _endDate = _startDate;
+        }
+      } else {
+        _endDate = picked;
+      }
+    });
+  }
+}
 
   String? _validateLocation(String? value) {
     if (value == null || value.trim().isEmpty) {

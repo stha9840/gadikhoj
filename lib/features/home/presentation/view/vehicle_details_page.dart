@@ -36,7 +36,7 @@ class VehicleDetailsView extends StatelessWidget {
             height: size.height * 0.25,
             width: double.infinity,
             child: Image.network(
-              'http://192.168.101.4:5000/uploads/${vehicle.filepath}',
+              'http://192.168.101.3:5000/uploads/${vehicle.filepath}',
               fit: BoxFit.cover,
               errorBuilder: (_, __, ___) => const Center(
                 child: Icon(Icons.broken_image, size: 100, color: Colors.grey),

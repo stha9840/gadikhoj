@@ -36,11 +36,16 @@ class VehicleDetailsView extends StatelessWidget {
             height: size.height * 0.25,
             width: double.infinity,
             child: Image.network(
-              'http://192.168.101.3:5000/uploads/${vehicle.filepath}',
+              'http://192.168.101.4:5000/uploads/${vehicle.filepath}',
               fit: BoxFit.cover,
-              errorBuilder: (_, __, ___) => const Center(
-                child: Icon(Icons.broken_image, size: 100, color: Colors.grey),
-              ),
+              errorBuilder:
+                  (_, __, ___) => const Center(
+                    child: Icon(
+                      Icons.broken_image,
+                      size: 100,
+                      color: Colors.grey,
+                    ),
+                  ),
               loadingBuilder: (context, child, loadingProgress) {
                 if (loadingProgress == null) return child;
                 return const Center(child: CircularProgressIndicator());
@@ -67,12 +72,18 @@ class VehicleDetailsView extends StatelessWidget {
                         children: [
                           Text(
                             vehicle.vehicleName,
-                            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                            style: const TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                           const SizedBox(height: 4),
                           Text(
                             vehicle.vehicleType,
-                            style: TextStyle(color: Colors.grey.shade600, fontSize: 15),
+                            style: TextStyle(
+                              color: Colors.grey.shade600,
+                              fontSize: 15,
+                            ),
                           ),
                         ],
                       ),
@@ -81,7 +92,10 @@ class VehicleDetailsView extends StatelessWidget {
                         children: [
                           Text(
                             "NPR ${vehicle.pricePerTrip.toStringAsFixed(0)}",
-                            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                           const Text(
                             "/trip",
@@ -98,9 +112,21 @@ class VehicleDetailsView extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      _specBox(FontAwesomeIcons.gasPump, "${vehicle.fuelCapacityLitres}L", "Fuel"),
-                      _specBox(FontAwesomeIcons.weightHanging, "${vehicle.loadCapacityKg}kg", "Load"),
-                      _specBox(FontAwesomeIcons.userGroup, vehicle.passengerCapacity, "Seats"),
+                      _specBox(
+                        FontAwesomeIcons.gasPump,
+                        "${vehicle.fuelCapacityLitres}L",
+                        "Fuel",
+                      ),
+                      _specBox(
+                        FontAwesomeIcons.weightHanging,
+                        "${vehicle.loadCapacityKg}kg",
+                        "Load",
+                      ),
+                      _specBox(
+                        FontAwesomeIcons.userGroup,
+                        vehicle.passengerCapacity,
+                        "Seats",
+                      ),
                     ],
                   ),
 
@@ -114,7 +140,11 @@ class VehicleDetailsView extends StatelessWidget {
                   const SizedBox(height: 8),
                   Text(
                     vehicle.vehicleDescription ?? "No description available.",
-                    style: TextStyle(fontSize: 15, color: Colors.grey.shade700, height: 1.6),
+                    style: TextStyle(
+                      fontSize: 15,
+                      color: Colors.grey.shade700,
+                      height: 1.6,
+                    ),
                   ),
                 ],
               ),
@@ -132,12 +162,15 @@ class VehicleDetailsView extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (_) => BlocProvider(
-                  create: (_) => BookingBloc(
-                    createBookingUsecase: context.read<CreateBookingUsecase>(),
-                  ),
-                  child: BookingScreen(vehicle: vehicle),
-                ),
+                builder:
+                    (_) => BlocProvider(
+                      create:
+                          (_) => BookingBloc(
+                            createBookingUsecase:
+                                context.read<CreateBookingUsecase>(),
+                          ),
+                      child: BookingScreen(vehicle: vehicle),
+                    ),
               ),
             );
           },
@@ -145,10 +178,15 @@ class VehicleDetailsView extends StatelessWidget {
             backgroundColor: Colors.black,
             foregroundColor: Colors.white,
             padding: const EdgeInsets.symmetric(vertical: 16),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(14),
+            ),
             elevation: 2,
           ),
-          child: const Text("Rent Now", style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600)),
+          child: const Text(
+            "Rent Now",
+            style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
+          ),
         ),
       ),
     );
@@ -161,7 +199,10 @@ class VehicleDetailsView extends StatelessWidget {
         Icon(icon, size: 22, color: Colors.grey.shade700),
         const SizedBox(height: 6),
         Text(value, style: const TextStyle(fontWeight: FontWeight.bold)),
-        Text(label, style: TextStyle(fontSize: 12, color: Colors.grey.shade600)),
+        Text(
+          label,
+          style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+        ),
       ],
     );
   }

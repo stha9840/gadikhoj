@@ -61,8 +61,8 @@ class _DashboardViewState extends State<DashboardView> {
             BottomNavigationBarItem(
               icon: Icon(
                 _selectedIndex == 2
-                    ? FontAwesomeIcons.solidBell
-                    : FontAwesomeIcons.bell,
+                    ? FontAwesomeIcons.solidHeart
+                    : FontAwesomeIcons.heart,
               ),
               label: 'Favourite',
             ),

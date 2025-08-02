@@ -341,7 +341,7 @@ class _HomeViewState extends State<HomeView> {
             // 3. WRAP THE IMAGE WITH A HERO WIDGET FOR ANIMATION
             Center(
               child: Image.network(
-                'http://192.168.101.3:5000/uploads/${vehicle.filepath}',
+                'http://192.168.101.4:5000/uploads/${vehicle.filepath}',
                 height: 120,
                 fit: BoxFit.contain,
                 errorBuilder:
@@ -409,24 +409,40 @@ class _HomeViewState extends State<HomeView> {
                   ),
                 ),
                 ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder:
-                            (_) => BlocProvider(
-                              create:
-                                  (context) => BookingBloc(
-                                    createBookingUsecase:
-                                        context.read<CreateBookingUsecase>(),
-                                  ),
-                              child: BookingScreen(vehicle: vehicle),
-                            ),
-                      ),
-                    );
-                  },
-                  child: const Text("Rent Now"),
-                ),
+  onPressed: () {
+    Navigator.push(
+      context,
+    MaterialPageRoute(
+      builder: (_) => BlocProvider(
+        create: (context) => BookingBloc(
+          createBookingUsecase: context.read<CreateBookingUsecase>(),
+        ),
+        child: BookingScreen(vehicle: vehicle),
+      ),
+    ),
+  );
+  },
+  style: ElevatedButton.styleFrom(
+    backgroundColor: Colors.blueAccent,
+    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6), // Tighter vertical padding
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(8), // Slightly sharper edges
+    ),
+    minimumSize: const Size(0, 28), // Force height to 28px
+    tapTargetSize: MaterialTapTargetSize.shrinkWrap, // Remove extra tap padding
+    elevation: 0,
+  ),
+  child: const Text(
+    "Rent Now",
+    style: TextStyle(
+      color: Colors.white,
+      fontWeight: FontWeight.w600,
+      fontSize: 14,
+      letterSpacing: 0.5,
+    ),
+  ),
+),
+
               ],
             ),
           ],

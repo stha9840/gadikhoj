@@ -116,7 +116,7 @@ class _BookingScreenState extends State<BookingScreen> {
                 children: [
                   Center(
                     child: Image.network(
-                      'http://192.168.101.3:5000/uploads/${vehicle.filepath}',
+                      'http://192.168.101.4:5000/uploads/${vehicle.filepath}',
                       height: 140,
                       fit: BoxFit.contain,
                       errorBuilder: (_, __, ___) =>

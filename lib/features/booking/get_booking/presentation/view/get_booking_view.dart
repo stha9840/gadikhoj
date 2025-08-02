@@ -335,7 +335,7 @@ class BookingDetailsPage extends StatelessWidget {
                           bottomRight: Radius.circular(20),
                         ),
                         child: Image.network(
-                          'http://192.168.101.3:5000/uploads/${vehicle.filepath}',
+                          'http://192.168.101.4:5000/uploads/${vehicle.filepath}',
                           fit: BoxFit.cover,
                           loadingBuilder: (context, child, loadingProgress) {
                             if (loadingProgress == null) return child;

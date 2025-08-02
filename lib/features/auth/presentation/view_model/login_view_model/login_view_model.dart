@@ -1,3 +1,4 @@
+import 'package:finalyearproject/core/utils/snackbar_helper.dart';
 import 'package:finalyearproject/features/auth/domain/use_case/user_login_usecase.dart';
 import 'package:finalyearproject/features/navigation/presentation/view/dashboard_view.dart';
 import 'package:flutter/material.dart';
@@ -27,9 +28,10 @@ class LoginViewModel extends Bloc<LoginEvent, LoginState> {
     result.fold(
       (failure) {
         emit(LoginFailure(message: failure.message));
-        ScaffoldMessenger.of(
-          event.context,
-        ).showSnackBar(SnackBar(content: Text(failure.message)));
+        showMySnackBar(
+      context: event.context,
+      message: failure.message,
+    );
       },
       (user) {
         emit(LoginSuccess());

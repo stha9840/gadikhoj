@@ -1,52 +1,46 @@
-
-    import 'package:finalyearproject/app/app.dart';
-    import 'package:finalyearproject/app/service_locator/service_locator.dart';
-    import 'package:finalyearproject/core/network/hive_service.dart';
-  import 'package:finalyearproject/features/auth/presentation/view_model/login_view_model/login_view_model.dart';
-    import 'package:flutter/material.dart';
-  import 'package:flutter_bloc/flutter_bloc.dart';
-
-    // void main() async {
-    //   WidgetsFlutterBinding.ensureInitialized();
-    //   await setupLocator();
-    //   await HiveService().init(); // handles registration
-    //   runApp(const MyApp());
-    // }
-
-
-  //   void main() {
-  //   runApp(
-  //     MultiBlocProvider(
-  //       providers: [
-  //         BlocProvider<LoginViewModel>(
-  //           create: (_) => serviceLocator<LoginViewModel>(),
-  //         ),
-  //         // other providers...
-  //       ],
-  //       child: MyApp(),
-  //     ),
-  //   );
-  // }
-
+import 'package:finalyearproject/features/home/data/data_source/remote_data_source/vehicle_remote_data_source.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';  
+import 'package:finalyearproject/app/app.dart';
+import 'package:finalyearproject/app/service_locator/service_locator.dart';
+import 'package:finalyearproject/core/network/hive_service.dart';
+import 'package:finalyearproject/features/auth/presentation/view_model/login_view_model/login_view_model.dart';
+import 'package:finalyearproject/features/home/domain/use_case/create_booking_usecase.dart';
+import 'package:finalyearproject/features/home/presentation/view_model/vehicle_event.dart';
+import 'package:finalyearproject/features/home/presentation/view_model/vehicle_view_model.dart';
+import 'package:get_it/get_it.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await setupLocator();
   await HiveService().init();
 
+  // RESET GetIt to avoid duplicate registrations on hot reload or restart
+  if (GetIt.I.isRegistered<VehicleRemoteDatasource>()) {
+    await GetIt.I.reset();
+  }
+
+  await setupLocator();
 
   runApp(
-    MultiBlocProvider(
+    MultiProvider(
       providers: [
-        BlocProvider<LoginViewModel>(
-          create: (_) => serviceLocator<LoginViewModel>(),
+        Provider<CreateBookingUsecase>(
+          create: (_) => serviceLocator<CreateBookingUsecase>(),
         ),
-        // Add other BLoCs here
       ],
-      child: const MyApp(),
-    
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider<LoginViewModel>(
+            create: (_) => serviceLocator<LoginViewModel>(),
+          ),
+          BlocProvider<VehicleBloc>(
+            create: (_) => serviceLocator<VehicleBloc>()..add(FetchVehiclesEvent()),
+          ),
+        ],
+        child: const MyApp(),
+      ),
     ),
-    
   );
 }

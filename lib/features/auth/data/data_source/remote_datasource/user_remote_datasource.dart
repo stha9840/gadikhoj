@@ -22,12 +22,12 @@ class UserRemoteDatasource implements IUserDataSource {
         final str = response.data['token'];
         return str;
       } else {
-        throw Exception(response.statusMessage);
+        throw Exception("Unable to login user");
       }
-    } on DioException catch (e) {
-      throw Exception('Failed to login user: ${e.message}');
-    } catch (e) {
-      throw Exception('Failed to login user: $e');
+    } on DioException {
+      throw ("Unable to login user");
+    } catch (_) {
+      throw ("Unable to login user");
     }
   }
 

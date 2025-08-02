@@ -37,7 +37,7 @@ class UserHiveModel extends Equatable {
       userId: user.userId,
       name: user.username,
       email: user.email,
-      password: user.password,
+      password: user.password ?? '',
     );
   }
 

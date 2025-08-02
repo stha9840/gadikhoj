@@ -11,6 +11,8 @@ class ApiEndpoints {
   // Auth
   static const String login = "auth/login";
   static const String register = "auth/register";
+  static const String requestReset = "admin/user/request-reset";
+  static const String resetPassword = "admin/user/reset-password/";
 
   // Vehicle
   static const String getAllVehicles = "admin/vehicle/";
@@ -18,4 +20,18 @@ class ApiEndpoints {
   // Booking
   static const String createBooking = "bookings/";
   static const String getUserBookings = "bookings/my";
+
+  static const String updateBookings = "bookings/";
+  static const String deleteBookings = "bookings/";
+  static const String cancelBookings = "bookings/";
+
+  // User
+  static const String getUser = "auth/me";
+  static const String updateUser = "auth/";
+  static const String deleteUser = "auth/";
+
+  //saved vechile
+  static const String addSavedVechile = "saved-vehicles/";
+  static const String getSavedVechile = "saved-vehicles/";
+  static const String removeSavedVechile = "saved-vehicles/";
 }

@@ -83,6 +83,7 @@ class _BookingScreenState extends State<BookingScreen> {
     final vehicle = widget.vehicle;
 
     return Scaffold(
+      backgroundColor: Colors.white, // ← Background color set to white
       appBar: AppBar(
         title: const Text('Book Vehicle'),
         backgroundColor: Colors.blueAccent,
@@ -96,9 +97,9 @@ class _BookingScreenState extends State<BookingScreen> {
             );
             Navigator.pop(context);
           } else if (state is BookingFailure) {
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(SnackBar(content: Text(state.error)));
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(state.error)),
+            );
           }
         },
         builder: (context, state) {
@@ -113,15 +114,13 @@ class _BookingScreenState extends State<BookingScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Job Card-like Details
                   Center(
                     child: Image.network(
                       'http://192.168.101.4:5000/uploads/${vehicle.filepath}',
                       height: 140,
                       fit: BoxFit.contain,
-                      errorBuilder:
-                          (_, __, ___) =>
-                              const Icon(Icons.broken_image, size: 80),
+                      errorBuilder: (_, __, ___) =>
+                          const Icon(Icons.broken_image, size: 80),
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -157,7 +156,6 @@ class _BookingScreenState extends State<BookingScreen> {
                   ),
                   const Divider(height: 30),
 
-                  // Date Selection & Input Fields
                   _buildDateField(
                     label: 'Start Date',
                     date: _startDate,
@@ -252,9 +250,8 @@ class _BookingScreenState extends State<BookingScreen> {
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
       ),
       onTap: onTap,
-      validator:
-          (value) =>
-              value == null || value.isEmpty ? '$label is required' : null,
+      validator: (value) =>
+          value == null || value.isEmpty ? '$label is required' : null,
     );
   }
 
@@ -270,9 +267,8 @@ class _BookingScreenState extends State<BookingScreen> {
         prefixIcon: Icon(icon),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
       ),
-      validator:
-          (value) =>
-              value == null || value.isEmpty ? '$label is required' : null,
+      validator: (value) =>
+          value == null || value.isEmpty ? '$label is required' : null,
     );
   }
 

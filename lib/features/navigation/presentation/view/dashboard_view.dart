@@ -1,9 +1,7 @@
+import 'package:finalyearproject/features/auth/presentation/view_model/profile_view_model/view/profile_view.dart';
 import 'package:finalyearproject/features/booking/get_booking/presentation/view/get_booking_view.dart';
-import 'package:finalyearproject/features/booking/presentation/view/booking_view.dart';
 import 'package:finalyearproject/features/home/presentation/view/home_view.dart';
-
-import 'package:finalyearproject/features/notification/presentation/view/notification_view.dart';
-import 'package:finalyearproject/features/profile/presentation/view/profile_view.dart';
+import 'package:finalyearproject/features/favourite/presentation/view/favourite_view.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -20,7 +18,7 @@ class _DashboardViewState extends State<DashboardView> {
   List<Widget> lstBottomScreen = [
     const HomeView(),
     const GetBookingView(),
-    const NotificationsView(),
+    const FavouriteView(),
     const ProfileView(),
   ];
 
@@ -63,10 +61,10 @@ class _DashboardViewState extends State<DashboardView> {
             BottomNavigationBarItem(
               icon: Icon(
                 _selectedIndex == 2
-                    ? FontAwesomeIcons.solidBell
-                    : FontAwesomeIcons.bell,
+                    ? FontAwesomeIcons.solidHeart
+                    : FontAwesomeIcons.heart,
               ),
-              label: 'Notifications',
+              label: 'Favourite',
             ),
             BottomNavigationBarItem(
               icon: Icon(

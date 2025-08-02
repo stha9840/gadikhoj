@@ -8,18 +8,18 @@ abstract class LoginEvent extends Equatable {
 }
 
 class LoginWithEmailAndPasswordEvent extends LoginEvent {
-  final BuildContext context;
+  // final BuildContext context;
   final String email;
   final String password;
 
   const LoginWithEmailAndPasswordEvent({
-    required this.context,
+    // required this.context,
     required this.email,
     required this.password,
   });
 
   @override
-  List<Object?> get props => [context, email, password];
+  List<Object?> get props => [ email, password];
 }
 
 class NavigateToRegisterViewEvent extends LoginEvent {
@@ -28,5 +28,5 @@ class NavigateToRegisterViewEvent extends LoginEvent {
   const NavigateToRegisterViewEvent({required this.context});
 
   @override
-  List<Object?> get props => [context];
+  List<Object?> get props => [];
 }

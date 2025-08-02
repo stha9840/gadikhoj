@@ -11,12 +11,30 @@ class _LoginViewState extends State<LoginView> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  bool _obscurePassword = true;
 
   void _login() {
+    final email = _emailController.text.trim();
+    final password = _passwordController.text;
+
+  
+    if (email.isEmpty || password.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter both email and password')),
+      );
+      return;
+    }
+
+    // Then validate form fields
     if (_formKey.currentState!.validate()) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Logging in...')));
+      // Simple static credential check
+      if (email == 'admin@example.com' && password == 'admin123') {
+        Navigator.pushReplacementNamed(context, '/dashboard');
+      } else {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Invalid credentials')));
+      }
     }
   }
 
@@ -24,6 +42,7 @@ class _LoginViewState extends State<LoginView> {
     return InputDecoration(
       labelText: label,
       prefixIcon: Icon(icon),
+      contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
       border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
     );
   }
@@ -34,54 +53,42 @@ class _LoginViewState extends State<LoginView> {
       body: Stack(
         fit: StackFit.expand,
         children: [
-          // Background image
           Image.asset('assets/images/login_page.png', fit: BoxFit.cover),
           Center(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
+              padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  // App name above the box
-                  const Text(
-                    'Gadi Khoj',
-                    style: TextStyle(
-                      fontSize: 32,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFFB24747),
-                      letterSpacing: 1.2,
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  // White box with login form
+                  Image.asset('assets/logos/gadikhojlogo.png', height: 120),
+                  const SizedBox(height: 30),
                   Container(
                     width: double.infinity,
-                    padding: const EdgeInsets.all(24),
+                    padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       boxShadow: const [
                         BoxShadow(
-                          color: Colors.black26,
-                          blurRadius: 10,
-                          offset: Offset(0, 5),
+                          color: Colors.black12,
+                          blurRadius: 8,
+                          offset: Offset(0, 4),
                         ),
                       ],
-                      borderRadius: BorderRadius.circular(32),
+                      borderRadius: BorderRadius.circular(24),
                     ),
                     child: Form(
                       key: _formKey,
                       child: Column(
-                        mainAxisSize: MainAxisSize.min,
                         children: [
                           const Text(
                             'Login',
                             style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w500,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
                               color: Colors.black87,
                             ),
                           ),
-                          const SizedBox(height: 20),
+                          const SizedBox(height: 16),
                           TextFormField(
                             controller: _emailController,
                             decoration: _inputDecoration('Email', Icons.email),
@@ -89,14 +96,27 @@ class _LoginViewState extends State<LoginView> {
                                 (value) =>
                                     value!.isEmpty ? 'Enter your email' : null,
                           ),
-                          const SizedBox(height: 16),
+                          const SizedBox(height: 12),
                           TextFormField(
                             controller: _passwordController,
+                            obscureText: _obscurePassword,
                             decoration: _inputDecoration(
                               'Password',
                               Icons.lock,
+                            ).copyWith(
+                              suffixIcon: IconButton(
+                                icon: Icon(
+                                  _obscurePassword
+                                      ? Icons.visibility_off
+                                      : Icons.visibility,
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    _obscurePassword = !_obscurePassword;
+                                  });
+                                },
+                              ),
                             ),
-                            obscureText: true,
                             validator:
                                 (value) =>
                                     value!.isEmpty
@@ -106,12 +126,19 @@ class _LoginViewState extends State<LoginView> {
                           const SizedBox(height: 8),
                           Align(
                             alignment: Alignment.centerRight,
-                            child: TextButton(
-                              onPressed: () {},
-                              child: const Text('Forgot Password?'),
+                            child: GestureDetector(
+                              onTap: () {},
+                              child: const Text(
+                                'Forgot Password?',
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: Color(0xFFB24747),
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
                             ),
                           ),
-                          const SizedBox(height: 8),
+                          const SizedBox(height: 12),
                           SizedBox(
                             width: double.infinity,
                             child: ElevatedButton(
@@ -119,32 +146,51 @@ class _LoginViewState extends State<LoginView> {
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: const Color(0xFFB24747),
                                 foregroundColor: Colors.white,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(32),
-                                ),
                                 padding: const EdgeInsets.symmetric(
-                                  vertical: 16,
+                                  vertical: 12,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(24),
                                 ),
                               ),
                               child: const Text('Login'),
                             ),
                           ),
-                          const SizedBox(height: 16),
+                          const SizedBox(height: 14),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              const Text("Don't have an account?"),
+                              const Text(
+                                "Don't have an account?",
+                                style: TextStyle(fontSize: 13),
+                              ),
                               TextButton(
                                 onPressed: () {
                                   Navigator.pushNamed(context, '/signup');
                                 },
-                                child: const Text('Sign up'),
+                                child: const Text(
+                                  'Sign up',
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    color: Color.fromARGB(255, 36, 43, 255),
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
                               ),
                             ],
                           ),
                         ],
                       ),
                     ),
+                  ),
+                  const SizedBox(height: 30),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset("assets/logos/facebook.png", width: 32),
+                      const SizedBox(width: 16),
+                      Image.asset("assets/logos/google.png", width: 32),
+                    ],
                   ),
                 ],
               ),

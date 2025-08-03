@@ -1,16 +1,3 @@
-# finalyearproject
+# Gadi Khoj
 
-A new Flutter project.
-
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Gadi Khoj is a vehicle rental mobile application designed to help users easily search, view, and book vehicles in real-time. The app allows users to explore available vehicles, save favorites, and manage their bookings seamlessly. It also includes an admin panel for managing vehicle listings and user bookings, providing a complete rental platform experience.
